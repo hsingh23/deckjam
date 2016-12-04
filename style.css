@@ -1,7 +1,7 @@
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
-/*.sticky {
+.sticky {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
@@ -10,31 +10,6 @@
 .sticky:after {
     content: '';
     display: table;
-}*/
-.sticky {
-  top: 0;
-}
-.sticky {
-  position: -webkit-sticky;
-  position: -moz-sticky;
-  position: -ms-sticky;
-  position: -o-sticky;
-  position: sticky;
-}
-/* When position: sticky is supported but native behavior is ignored */
-.sticky-withoutfixedfixed .sticky-off,
-.fixed-supported .sticky-off {
-  position: static;
-}
-.sticky-withoutfixedfixed .sticky-on,
-.fixed-supported .sticky-on {
-  position: fixed;
-}
-.sticky-dummy {
-  display: none;
-}
-.sticky-on + .sticky-dummy {
-  display: block;
 }
 
 .noselect {
