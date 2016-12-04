@@ -1,0 +1,125 @@
+doctype html
+html(lang='en')
+  head
+    title Deckjam
+    link(rel='stylesheet', href='angular-material.min.css')
+    link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic")
+    link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
+    link(rel='stylesheet', href='style.css')
+  body(ng-app='deckjam' ng-controller='homeContainer' layout="column")
+    md-toolbar(class="md-hue-2")
+      .md-toolbar-tools
+        h2(flex md-truncate) Deckjam
+        md-input-container(flex="noshrink" min-width="50px" style="margin: 0 20px; display:flex; color: white;" md-no-float)
+          input(ng-model="search" ng-model-options="{debounce: 200}" type="search" placeholder="Smart Search" autofocus ng-submit="getTerms(true)")
+        md-button(ng-click="getTerms(true)" md-primary) swap
+        md-button(ng-click="getTerms(false)" md-accent) add
+      md-tabs.md-primary(md-stretch-tabs="auto" md-selected='data.selectedIndex')
+        md-tab#tab1(aria-controls='tab1-content') Decks
+        md-tab#tab2(aria-controls='tab2-content') Selected
+      //- blah
+        //- md-toolbar(ng-show='!showSearch')
+        //-   .md-toolbar-tools
+        //-     //- md-button(ng-click="toggleSidenav('left')", hide-gt-md='', aria-label='Menu')
+        //-     //-   ng-md-icon(icon='menu')
+        //-     h3 Deckjam
+        //-     span(flex='')
+        //-     md-button(aria-label='Search', ng-click='showSearch = !showSearch')
+        //-       ng-md-icon(icon='search')
+        //-     md-button(aria-label='Open Settings', ng-click='showListBottomSheet($event)')
+        //-       ng-md-icon(icon='more_vert')
+        //-     md-tabs.md-primary(md-stretch-tabs='', md-selected='data.selectedIndex')
+        //-       md-tab#tab1(aria-controls='tab1-content') Decks
+        //-       md-tab#tab2(aria-controls='tab2-content') Selected
+        //- md-toolbar.md-hue-1(ng-show='showSearch')
+        //-   .md-toolbar-tools
+        //-     md-button(ng-click='showSearch = !showSearch', aria-label='Back')
+        //-       md-tooltip(md-direction='bottom') Back
+        //-       ng-md-icon(icon='arrow_back')
+        //-     md-input-container(md-theme='input', flex='')
+        //-       label
+        //-       input(ng-model='search.who', placeholder='enter search')
+        //-     md-button(aria-label='Search', ng-click='showSearch = !showSearch')
+        //-       ng-md-icon(icon='search')
+        //-     md-button(aria-label='Open Settings', ng-click='showListBottomSheet($event)')
+        //-       ng-md-icon(icon='more_vert')
+        //- md-toolbar
+        //-   .md-toolbar-tools()
+        //-       h2(flex) Deckjam
+        //-       md-input-container(flex)
+        //-         label Search
+        //-         input(ng-model='user.title')
+        //- md-tabs.md-primary(md-selected='data.selectedIndex')
+        //-   md-tab#tab1(aria-controls='tab1-content') Decks
+        //-   md-tab#tab2(aria-controls='tab2-content') Selected
+        //- // nav.navbar.navbar-findcond.navbar-fixed-top
+        //- // .container-fluid
+        //- // #navbar.navbar-collapse
+        //- // ul.nav.navbar-nav
+        //- // li
+        //- // a(href='#decks') Decks
+        //- // li
+        //- // a(href='#selected') Selected
+        //- // form.navbar-form.navbar-right.search-form(role='search')
+        //- // input#terms.form-control(type="text",placeholder="term1,term2",ng-model="search")
+        //- // button.btn.btn-default(ng-click="getTerms(true)") replace
+        //- // button.btn.btn-default(ng-click="getTerms(false)") add
+    md-content(flex)
+      #results(ng-mousedown='md = true', ng-mouseup='md = false', ng-mouseleave='md = false', ng-cloak='')
+        md-card.noselect(ng-repeat='(id, set) in decks')
+          md-card-title.sticky
+            md-card-title-text
+              span.md-headline
+                | {{set.title}}
+                md-card-icon-actions
+                  md-button.md-icon-button(aria-label='Remove Deck')
+                    md-tooltip(md-direction='bottom') Remove Deck
+                    md-icon.material-icons.step(aria-label='Remove deck', ng-class='it.size', ng-click='removeDeck(id)') close
+                  md-button.md-icon-button(aria-label='Add All')
+                    md-tooltip(md-direction='bottom') Select All
+                    md-icon.material-icons.step(aria-label='Add all', ng-class='it.size', ng-click='selectAll(id)') playlist_add_check
+          md-card-content
+            table.table
+              tbody
+                tr(ng-class='{success: !!term.selected}', ng-repeat='(id2, term) in set.terms', ng-mouseover='selectTerm(term, id, md)', ng-mousedown='selectTerm(term, id)')
+                  td {{term.term}}
+                  td
+                    img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}')
+                    | {{term.definition}}
+        .row
+          .col-xs-12
+            h2#selected
+              | Selected
+              button.btn.btn-danger(ng-click='clearSelected()') Clear Selected
+              button.btn.btn-info(ng-click="selectedOrder='term'") Term
+              button.btn.btn-info(ng-click="selectedOrder='time'") Time
+          .col-xs-12
+            form.navbar-form.navbar-left(role='search')
+              .form-group(ng-cloak='')
+                input.form-control(type='text', placeholder='Deck name', ng-model='title')
+                button.btn.btn-default(type='submit', ng-click='create()', ng-class='{disabled: !!creating}') Create
+                a.btn.btn-default(ng-show='url', ng-href='{{url}}', target='_blank', rel='noopener') {{creating? "loading" : "Check out your deck!"}}
+          .col-xs-12
+            .table-responsive
+              table.table
+                tbody
+                  tr(ng-class='{success: !!card.selected}', ng-repeat='card in selectedArray() | orderBy:selectedOrder', ng-click='removeSelected(card.id)')
+                    td(ng-cloak='') {{card.term}}
+                    td(ng-cloak='')
+                      img(ng-if='card.image', ng-src='{{card.image.url}}')
+                      | {{card.definition}}
+    script(src='angular.js')
+    script(src='bloomfilter.js')
+    // script(src="https://cdnjs.cloudflare.com/ajax/libs/pouchdb/6.0.7/pouchdb.js")
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js')
+    
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/fixed-sticky/0.1.7/fixedsticky.min.js')
+    //- script(src='https://cdnjs.cloudflare.com/ajax/libs/stickyfill/1.1.4/stickyfill.js')
+
+    script(src='angular-material.min.js')
+    script(src='angular-material-icons.min.js')
+    script(src='angular-aria.min.js')
+    script(src='angular-messages.js')
+    script(src='angular-animate.min.js')
+    script(src='lodash.js')
+    script(src='app.js')
