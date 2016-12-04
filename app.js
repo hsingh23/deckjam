@@ -104,19 +104,3 @@ var app = angular.module('deckjam', ['ngMaterial', 'ngMdIcons'])
       })
     }
 }])
-
-NodeList.prototype.forEach = NodeList.prototype.forEach || Array.prototype.forEach;
-
-var observer = new MutationObserver(_.debounce(()=> {
-  console.log("called");
-  // Stickyfill.stickies.forEach(function (el) {
-  //   Stickyfill.remove(el);
-  // })
-  document.querySelectorAll(".sticky").forEach(function (el) {
-    console.log(el);
-    Stickyfill.add(el);
-  })
-  Stickyfill.rebuild()
-}, 500));
-observer.observe(document.querySelector("body"), { childList: true})
-Stickyfill.init()

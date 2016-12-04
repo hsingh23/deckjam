@@ -1,16 +1,6 @@
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
-.sticky {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-}
-.sticky:before,
-.sticky:after {
-    content: '';
-    display: table;
-}
 
 .noselect {
   -webkit-user-select: none;
