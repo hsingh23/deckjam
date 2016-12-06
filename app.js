@@ -31,6 +31,8 @@ var app = angular.module('deckjam', ['ngMaterial', 'ngMdIcons'])
   _.getSets = (sets)=> $http.get(`http://ayudh.org:3337/quizlet/sets?query=${sets}`, { cache: true})
   _.decks = JSON.parse(localStorage.decks || '{}')
   _.selected = JSON.parse(localStorage.selected || '{}')
+  _.selectedOrder = "time"
+  _.reverse = true
   _.md = false
   _.selectedArray = ()=> lo.values(_.selected)
   _.selectTerm = (term, setId, mouseDown=true) => {
@@ -45,6 +47,25 @@ var app = angular.module('deckjam', ['ngMaterial', 'ngMdIcons'])
     localStorage.selected = JSON.stringify(_.selected)
   }
   _.removeDeck = id=> delete _.decks[id]
+  _.selectAll = id=> {
+    if (_.decks[id]) {
+      // all selected, then unselect all
+      if (_.decks[id].terms.find(x=> !!x.selected)){
+        _.decks[id].terms.forEach(term => {
+          term.selected = false
+          delete _.selected[term.id]
+        })
+      } else {
+        _.decks[id].terms.forEach(term => {
+          term.selected = true
+          _.selected[term.id] = lo.assign({},term)
+          _.selected[term.id].setId = id
+          _.selected[term.id].time = (new Date()).getTime()
+        })
+      }
+      localStorage.selected = JSON.stringify(_.selected)
+    }
+  }
   _.clearSelected = ()=> {
     _.selected = {}
     localStorage.selected = '{}'
