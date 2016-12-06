@@ -6,17 +6,89 @@ html(lang='en')
     link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic")
     link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
     link(rel='stylesheet', href='style.css')
-  body(ng-app='deckjam' ng-controller='homeContainer' layout="column")
-    md-toolbar(class="md-hue-2")
+  body(ng-app='deckjam' ng-controller='homeContainer' layout="column" layout-fill)
+    md-toolbar(class="md-hue-1" md-scroll-shrink )
       .md-toolbar-tools
-        h2(flex md-truncate) Deckjam
-        md-input-container(flex="noshrink" min-width="50px" style="margin: 0 20px; display:flex; color: white;" md-no-float)
-          input(ng-model="search" ng-model-options="{debounce: 200}" type="search" placeholder="Smart Search" autofocus ng-submit="getTerms(true)")
-        md-button(ng-click="getTerms(true)" md-primary) swap
-        md-button(ng-click="getTerms(false)" md-accent) add
+        h2( md-truncate) Deckjam
+        form(ng-submit="getTerms(true)" layout="row" flex)
+          md-input-container(flex="noshrink" width="50px" style="margin: 0 20px; display:flex; color: white;" md-no-float)
+            input(ng-model="search" ng-model-options="{debounce: 200}" type="search" placeholder="Smart Search" autofocus ng-submit="getTerms(true)")
+          md-button(ng-click="getTerms(true)" md-primary) swap
+          md-button(ng-click="getTerms(false)" md-accent) add
       md-tabs.md-primary(md-stretch-tabs="auto" md-selected='data.selectedIndex')
-        md-tab#tab1(aria-controls='tab1-content') Decks
-        md-tab#tab2(aria-controls='tab2-content') Selected
+        md-tab#decks(aria-controls='decks-content') Decks
+        md-tab#selected(aria-controls='selected-content') Selected
+    md-content(flex)
+      ui-view(layout='column', layout-fill='', layout-padding='')
+        .inset(hide-sm='')
+        ng-switch.tabpanel-container(on='data.selectedIndex')
+          #decks-content(role='tabpanel', aria-labelledby='decks', ng-switch-when='0')
+            #results(ng-mousedown='md = true', ng-mouseup='md = false', ng-mouseleave='md = false', ng-cloak='')
+              md-card.noselect(ng-repeat='(id, set) in decks')
+                md-card-title
+                  md-card-title-text
+                    span.md-headline {{set.title}}
+                      md-card-icon-actions
+                        md-button.md-icon-button(class="md-raised")
+                          md-tooltip Remove Deck
+                          md-icon.material-icons.step(ng-click='removeDeck(id)') close
+                        md-button.md-icon-button(class="md-raised")
+                          md-tooltip Select All
+                          md-icon.material-icons.step(ng-class='it.size', ng-click='selectAll(id)') playlist_add_check
+                md-card-content
+                  table.table
+                    tbody
+                      tr(ng-class='{success: !!term.selected}', ng-repeat='(id2, term) in set.terms', ng-mouseover='selectTerm(term, id, md)', ng-mousedown='selectTerm(term, id)')
+                        td {{term.term}}
+                        td
+                          img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}')
+                          | {{term.definition}}
+          #selected-content(role='tabpanel', aria-labelledby='selected', ng-switch-when='1')
+            md-card
+              md-card-actions(layout='row')
+                md-card-icon-actions
+                  md-input-container(layout='row')
+                    label Sort By
+                    md-select(ng-model="selectedOrder" placeholder="Sort by")
+                      md-option(value="time") time
+                      md-option(value="term") term
+                  md-switch(ng-model="reverse") Reverse
+                md-button Create
+                md-button Import
+                md-button.md-icon-button(ng-click='clearSelected()')
+                  md-tooltip Clear Selected
+                  md-icon.material-icons.step(style="color: red") clear_all
+              md-card-content
+                table.table
+                  tbody
+                    tr(ng-class='{success: !!card.selected}', ng-repeat='card in selectedArray() | orderBy:selectedOrder:reverse', ng-click='removeSelected(card.id)')
+                      td(ng-cloak='') {{card.term}}
+                      td(ng-cloak='')
+                        img(ng-if='card.image', ng-src='{{card.image.url}}')
+                        | {{card.definition}}
+            //- .row
+            //-   .col-xs-12
+            //-     h2#selected
+            //-       | Selected
+            //-       button.btn.btn-danger(ng-click='clearSelected()') Clear Selected
+            //-       button.btn.btn-info(ng-click="selectedOrder='term'") Term
+            //-       button.btn.btn-info(ng-click="selectedOrder='time'") Time
+            //-   .col-xs-12
+            //-     form.navbar-form.navbar-left(role='search')
+            //-       .form-group(ng-cloak)
+            //-         input.form-control(type='text', placeholder='Deck name', ng-model='title')
+            //-         button.btn.btn-default(type='submit', ng-click='create()', ng-class='{disabled: !!creating}') Create
+            //-         a.btn.btn-default(ng-show='url', ng-href='{{url}}', target='_blank', rel='noopener') {{creating? "loading" : "Check out your deck!"}}
+            //-   .col-xs-12
+            //-     .table-responsive
+            //-       table.table
+            //-         tbody
+            //-           tr(ng-class='{success: !!card.selected}', ng-repeat='card in selectedArray() | orderBy:selectedOrder', ng-click='removeSelected(card.id)')
+            //-             td(ng-cloak='') {{card.term}}
+            //-             td(ng-cloak='')
+            //-               img(ng-if='card.image', ng-src='{{card.image.url}}')
+            //-               | {{card.definition}}
+
       //- blah
         //- md-toolbar(ng-show='!showSearch')
         //-   .md-toolbar-tools
@@ -34,7 +106,7 @@ html(lang='en')
         //- md-toolbar.md-hue-1(ng-show='showSearch')
         //-   .md-toolbar-tools
         //-     md-button(ng-click='showSearch = !showSearch', aria-label='Back')
-        //-       md-tooltip(md-direction='bottom') Back
+        //-       md-tooltip Back
         //-       ng-md-icon(icon='arrow_back')
         //-     md-input-container(md-theme='input', flex='')
         //-       label
@@ -64,57 +136,15 @@ html(lang='en')
         //- // input#terms.form-control(type="text",placeholder="term1,term2",ng-model="search")
         //- // button.btn.btn-default(ng-click="getTerms(true)") replace
         //- // button.btn.btn-default(ng-click="getTerms(false)") add
-    md-content(flex)
-      #results(ng-mousedown='md = true', ng-mouseup='md = false', ng-mouseleave='md = false', ng-cloak='')
-        md-card.noselect(ng-repeat='(id, set) in decks')
-          md-card-title.sticky
-            md-card-title-text
-              span.md-headline
-                | {{set.title}}
-                md-card-icon-actions
-                  md-button.md-icon-button(aria-label='Remove Deck')
-                    md-tooltip(md-direction='bottom') Remove Deck
-                    md-icon.material-icons.step(aria-label='Remove deck', ng-class='it.size', ng-click='removeDeck(id)') close
-                  md-button.md-icon-button(aria-label='Add All')
-                    md-tooltip(md-direction='bottom') Select All
-                    md-icon.material-icons.step(aria-label='Add all', ng-class='it.size', ng-click='selectAll(id)') playlist_add_check
-          md-card-content
-            table.table
-              tbody
-                tr(ng-class='{success: !!term.selected}', ng-repeat='(id2, term) in set.terms', ng-mouseover='selectTerm(term, id, md)', ng-mousedown='selectTerm(term, id)')
-                  td {{term.term}}
-                  td
-                    img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}')
-                    | {{term.definition}}
-        .row
-          .col-xs-12
-            h2#selected
-              | Selected
-              button.btn.btn-danger(ng-click='clearSelected()') Clear Selected
-              button.btn.btn-info(ng-click="selectedOrder='term'") Term
-              button.btn.btn-info(ng-click="selectedOrder='time'") Time
-          .col-xs-12
-            form.navbar-form.navbar-left(role='search')
-              .form-group(ng-cloak='')
-                input.form-control(type='text', placeholder='Deck name', ng-model='title')
-                button.btn.btn-default(type='submit', ng-click='create()', ng-class='{disabled: !!creating}') Create
-                a.btn.btn-default(ng-show='url', ng-href='{{url}}', target='_blank', rel='noopener') {{creating? "loading" : "Check out your deck!"}}
-          .col-xs-12
-            .table-responsive
-              table.table
-                tbody
-                  tr(ng-class='{success: !!card.selected}', ng-repeat='card in selectedArray() | orderBy:selectedOrder', ng-click='removeSelected(card.id)')
-                    td(ng-cloak='') {{card.term}}
-                    td(ng-cloak='')
-                      img(ng-if='card.image', ng-src='{{card.image.url}}')
-                      | {{card.definition}}
+
+        
     script(src='angular.js')
     script(src='bloomfilter.js')
     // script(src="https://cdnjs.cloudflare.com/ajax/libs/pouchdb/6.0.7/pouchdb.js")
-    script(src='angular-material.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.1/angular-material.js')
     script(src='angular-material-icons.min.js')
-    script(src='angular-aria.min.js')
-    script(src='angular-messages.js')
-    script(src='angular-animate.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-aria.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-messages.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-animate.js')
     script(src='lodash.js')
     script(src='app.js')
