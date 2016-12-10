@@ -1,0 +1,10 @@
+{
+  "name": "Deckjam_files",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Harsh Singh <harsingh@cimpress.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-preset-latest": "^6.16.0"
+  }
+}
