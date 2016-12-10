@@ -18,7 +18,7 @@ md-input-container input {
   -o-user-select: none;
   user-select: none;
 }
-
+/*
 md-content.md-default-theme {
   background-color: #eee;
 }
@@ -50,7 +50,7 @@ md-toolbar:not(.md-hue-1),
   fill: #fff;
 }
 
-
+*/
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
  * Copyright 2011-2016 Twitter, Inc.
