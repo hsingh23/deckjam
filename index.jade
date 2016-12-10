@@ -21,8 +21,8 @@ html(lang='en')
             input(ng-model="search" ng-model-options="{debounce: 200}" type="search" placeholder="Smart Search" autofocus ng-submit="getTerms(true)")
           md-button.md-primary(ng-click="getTerms(true)" md-truncate) swap
           md-button(ng-click="getTerms(false)" md-truncate) add
-          md-button(class='md-icon-button')
-            md-icon.material-icons more_vert
+          md-button.md-icon-button(ng-click="help=!help" ng-init="help=true")
+            md-icon.material-icons help
       md-tabs.md-primary(md-stretch-tabs="auto" md-selected='data.selectedIndex')
         md-tab#decks(aria-controls='decks-content') Decks
         md-tab#selected(aria-controls='selected-content') Selected
@@ -30,19 +30,30 @@ html(lang='en')
       ui-view(layout='column', layout-fill='', layout-padding='')
         .inset(hide-sm='')
         ng-switch.tabpanel-container(on='data.selectedIndex')
-          #decks-content(role='tabpanel', aria-labelledby='decks', ng-switch-when='0')
-            #results(ng-mousedown='md = true', ng-mouseup='md = false' ng-mouseleave='md = false')
+          #decks-content(role='tabpanel' aria-labelledby='decks' ng-switch-when='0')
+            md-card(ng-show="help")
+              md-card-title
+                md-card-title-text
+                  span.md-headline Welcome to deckjam
+                    md-button(ng-click='help=!help')
+                      md-tooltip Hide help
+                      | Ok
+              md-card-content
+                p Deckjam is a flash card curation tool. Flashcards are proven to improve recognition and recall, yet creating flashcards can be tedious. With deckjam you can pick flashcards from other people public flashcards set on quizlet.com to make your own flashcard set. Once your set is complete you can upload it on quizlet.com.
+                strong Search something in the smart search now to get started!
+                p With deckjam, you can find flashcards that match your expression style. Each search provides relevant results allowing you to quickly build concise learning materials to prepare for tests and also engage in lifelong learning. Since cards are stored on quizlet, you can easily access them anywhere with rich mobile friendly apps and interactive games.
+            #results(ng-mousedown='md = true' ng-mouseup='md = false' ng-mouseleave='md = false')
               md-card.noselect(ng-repeat='(id, set) in decks' md-whiteframe="3")
                 md-card-title
                   md-card-title-text
                     span.md-headline {{set.title}}
                       md-card-icon-actions
-                        md-button.md-icon-button
+                        md-button.md-icon-button(ng-click='removeDeck(id)')
                           md-tooltip Remove Deck
-                          md-icon.material-icons(ng-click='removeDeck(id)') close
-                        md-button.md-icon-button
+                          md-icon.material-icons close
+                        md-button.md-icon-button(ng-click='selectAll(id)')
                           md-tooltip Select All
-                          md-icon.material-icons(ng-class='it.size', ng-click='selectAll(id)') playlist_add_check
+                          md-icon.material-icons playlist_add_check
                 md-card-content(style="margin-top:-15px")
                   table.table
                     thead
@@ -50,12 +61,23 @@ html(lang='en')
                         th Terms
                         th Definitions
                     tbody
-                      tr(ng-class='{success: !!term.selected}', ng-repeat='(id2, term) in set.terms', ng-mouseover='selectTerm(term, id, md)', ng-mousedown='selectTerm(term, id)')
+                      tr(ng-class='{success: !!term.selected}' ng-repeat='(id2, term) in set.terms' ng-mouseover='selectTerm(term, id, md)' ng-mousedown='selectTerm(term, id)')
                         td {{term.term}}
                         td
                           img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}')
                           | {{term.definition}}
           #selected-content(role='tabpanel', aria-labelledby='selected', ng-switch-when='1')
+            md-card(ng-show="helpSelected" ng-init="helpSelected=true")
+              md-card-title
+                md-card-title-text
+                  span.md-headline Your curated cards
+                    md-button(ng-click='helpSelected=!helpSelected')
+                      md-tooltip Hide help
+                      | Ok
+              md-card-content
+                p Your cards are saved between searches and browser reloads. To clear your search results click
+                  md-icon.material-icons(style="color: red") clear_all
+                  | . You can easily import an quizlet set using the import button. Clicking editable allows you to edit flashcards. Once you are ready, create a deck by giving it a name. When your deck is ready, a button will take you to the quizlet deck. Then you can clone the deck into your account to customize it further on quizlet.com.
             md-card(md-whiteframe="3")
               md-card-actions(layout='row' layout-align="center center" ng-show="selected_actions=='home'" ng-init="selected_actions='home'")
                 md-card-icon-actions
@@ -67,9 +89,7 @@ html(lang='en')
                   md-select(ng-model="selectedOrder" placeholder="Sort by")
                     md-option(value="time") time
                     md-option(value="term") term
-                md-input-container(layout='row')
-                  md-tooltip Reverse
-                  md-button(ng-click="reverse=!reverse") Flip
+                md-button(ng-click="reverse=!reverse") Flip
                 md-button.md-icon-button(ng-click='clearSelected()')
                   md-tooltip Clear Selected
                   md-icon.material-icons(style="color: red") clear_all
@@ -101,8 +121,12 @@ html(lang='en')
                   tbody
                     tr(ng-repeat='card in selectedArray() | orderBy:selectedOrder:reverse')
                       td(layout="column")
-                        md-icon.material-icons(style="color: red" ng-click='removeSelected(card.id)') delete
-                        md-icon.material-icons(ng-click='swapSelected(card.id)') swap_horiz
+                        md-button.md-icon-button(ng-click='removeSelected(card.id)')
+                          md-tooltip Remove
+                          md-icon.material-icons(style="color: red") delete
+                        md-button.md-icon-button(ng-click='swapSelected(card.id)')
+                          md-tooltip Swap term and definition
+                          md-icon.material-icons swap_horiz
                       td
                         md-input-container(style="width:100%" ng-if="selected_edit")
                           textarea(aria-label="term" type="text" ng-model="card.term" ng-minlength="1" style="width:100%")

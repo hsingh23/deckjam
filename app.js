@@ -26,9 +26,12 @@ var app = angular.module('deckjam', ['ngMaterial'])
     .primaryPalette('grey')
 })
 .controller('homeContainer', ["$scope","$http",(_, $http)=> {
-  _.getSetsforTerm = (term)=> $http.get(`http://ayudh.org:3337/quizlet/search?query=${term}`, { cache: true})
-  _.getSets = (sets)=> $http.get(`http://ayudh.org:3337/quizlet/sets?query=${sets}`, { cache: true})
-  _.decks = JSON.parse(localStorage.decks || '{}')
+  _.api = 'http://ayudh.org:3337'
+  // _.api = 'http://localhost:3337'
+  _.getSetsforTerm = (term)=> $http.get(`${_.api}/quizlet/search?query=${term}`, { cache: true})
+  _.getSets = (sets)=> $http.get(`${_.api}/quizlet/sets?query=${sets}`, { cache: true})
+  _.decks = {}
+  // _.decks = JSON.parse(localStorage.decks || '{}')
   _.selected = JSON.parse(localStorage.selected || '{}')
   _.selectedOrder = "time"
   _.reverse = true
@@ -48,18 +51,19 @@ var app = angular.module('deckjam', ['ngMaterial'])
   _.removeDeck = id=> delete _.decks[id]
   _.selectAll = id=> {
     if (_.decks[id]) {
-      // all selected, then unselect all
-      if (_.decks[id].terms.find(x=> !!x.selected)){
-        _.decks[id].terms.forEach(term => {
-          term.selected = false
-          delete _.selected[term.id]
-        })
-      } else {
+      // some unselected, then select all
+      if (_.decks[id].terms.find(x=> !x.selected)){
         _.decks[id].terms.forEach(term => {
           term.selected = true
           _.selected[term.id] = lo.assign({},term)
           _.selected[term.id].setId = id
           _.selected[term.id].time = (new Date()).getTime()
+        })
+      } else {
+        // unselect everything
+        _.decks[id].terms.forEach(term => {
+          term.selected = false
+          delete _.selected[term.id]
         })
       }
       localStorage.selected = JSON.stringify(_.selected)
@@ -73,6 +77,7 @@ var app = angular.module('deckjam', ['ngMaterial'])
     var {term, definition} = _.selected[id]
     _.selected[id].definition = term
     _.selected[id].term = definition
+    localStorage.selected = JSON.stringify(_.selected)
   }
   _.removeSelected = id=> {
     var {setId, rank} = _.selected[id]
@@ -80,13 +85,14 @@ var app = angular.module('deckjam', ['ngMaterial'])
       _.decks[setId].terms[rank].selected = false
     }
     delete _.selected[id]
+    localStorage.selected = JSON.stringify(_.selected)
   }
   _.create = (title)=> {
     _.url = null
     _.creating = true
     $http({
       method: 'POST',
-      url: 'http://ayudh.org:3337/create-set',
+      url: `${_.api}/create-set`,
       data: JSON.stringify({
         title: title,
         lang_terms: 'en',
@@ -110,6 +116,7 @@ var app = angular.module('deckjam', ['ngMaterial'])
         })
       })
     })
+    localStorage.selected = JSON.stringify(_.selected)
   }
   _.getTerms = (replace)=> {
     _.decks = !!replace ? {} : (_.decks || {})
@@ -134,7 +141,7 @@ var app = angular.module('deckjam', ['ngMaterial'])
                 _.decks[set.id].terms_length = terms.length
               }
             })
-            localStorage.decks = JSON.stringify(_.decks)
+            // localStorage.decks = JSON.stringify(_.decks)
           })
         })
       })
