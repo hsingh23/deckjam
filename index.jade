@@ -2,10 +2,16 @@ doctype html
 html(lang='en')
   head
     title Deckjam
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='apple-mobile-web-app-capable', content='yes')
+    meta(name='viewport', content='width=device-width,initial-scale=1')
+    meta(charset='utf-8')
     link(rel='stylesheet', href='angular-material.min.css')
     link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic")
     link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
     link(rel='stylesheet', href='style.css')
+
   body(ng-app='deckjam' ng-controller='homeContainer' layout="column" layout-fill ng-cloak)
     md-toolbar(class="md-hue-1")
       .md-toolbar-tools
@@ -51,13 +57,11 @@ html(lang='en')
                           | {{term.definition}}
           #selected-content(role='tabpanel', aria-labelledby='selected', ng-switch-when='1')
             md-card(md-whiteframe="3")
-              md-card-title
-                md-card-title-text
-                  md-subhead Your curated cards
               md-card-actions(layout='row' layout-align="center center" ng-show="selected_actions=='home'" ng-init="selected_actions='home'")
                 md-card-icon-actions
                   md-button.md-primary(ng-click="selected_actions='create'") Create
                   md-button(ng-click="selected_actions='import'") Import
+                  md-button(ng-click="selected_edit=!selected_edit" ng-init="selected_edit = false") Editable
                 md-input-container(layout='row')
                   label Sort By
                   md-select(ng-model="selectedOrder" placeholder="Sort by")
@@ -100,12 +104,14 @@ html(lang='en')
                         md-icon.material-icons(style="color: red" ng-click='removeSelected(card.id)') delete
                         md-icon.material-icons(ng-click='swapSelected(card.id)') swap_horiz
                       td
-                        md-input-container(style="width:100%")
+                        md-input-container(style="width:100%" ng-if="selected_edit")
                           textarea(aria-label="term" type="text" ng-model="card.term" ng-minlength="1" style="width:100%")
+                        span(ng-if="!selected_edit") {{card.term}}
                       td
                         img(ng-if='card.image', ng-src='{{card.image.url}}')
-                        md-input-container(style="width:100%")
+                        md-input-container(style="width:100%" ng-if="selected_edit")
                           textarea(aria-label="definition" ng-model="card.definition" ng-minlength="1" style="width:100%")
+                        span(ng-if="!selected_edit") {{card.definition}}
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular.js')
     script(src='bloomfilter.js')
     // script(src="https://cdnjs.cloudflare.com/ajax/libs/pouchdb/6.0.7/pouchdb.js")

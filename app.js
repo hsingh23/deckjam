@@ -1,6 +1,6 @@
 "use babel";
-if ((!location.port || location.port == "80") && location.protocol != 'https:') {
-  location.protocol = 'https:';
+if (location.protocol != 'http:') {
+  location.protocol = 'http:';
 }
 // if ('serviceWorker' in navigator) {
 //   navigator.serviceWorker.register('service-worker.js');
