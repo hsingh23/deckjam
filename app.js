@@ -1,15 +1,14 @@
 "use babel";
+if ((!location.port || location.port == "80") && location.protocol != 'https:') {
+  location.protocol = 'https:';
+}
+// if ('serviceWorker' in navigator) {
+//   navigator.serviceWorker.register('service-worker.js');
+// }
 // removed service workers and fetch because quizlet does not do cors http://stackoverflow.com/a/34940074 
 // no-cors mode won't send authorization header https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
 var lo = _;
-//  'ngAnimate', 'ngAria', 'ngMessages'
-var app = angular.module('deckjam', ['ngMaterial', 'ngMdIcons'])
-// .config(function($mdThemingProvider){
-//   $mdThemingProvider.theme('default')
-//     .primaryPalette("brown")
-//     .accentPalette('red')
-//     .warnPalette('yellow');
-// })
+var app = angular.module('deckjam', ['ngMaterial'])
 .config(function($mdThemingProvider) {
   var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
     'contrastDefaultColor': 'light',
@@ -70,6 +69,11 @@ var app = angular.module('deckjam', ['ngMaterial', 'ngMdIcons'])
     _.selected = {}
     localStorage.selected = '{}'
   }
+  _.swapSelected = id=> {
+    var {term, definition} = _.selected[id]
+    _.selected[id].definition = term
+    _.selected[id].term = definition
+  }
   _.removeSelected = id=> {
     var {setId, rank} = _.selected[id]
     if(_.decks[setId]) {
@@ -77,22 +81,34 @@ var app = angular.module('deckjam', ['ngMaterial', 'ngMdIcons'])
     }
     delete _.selected[id]
   }
-  _.create = ()=> {
+  _.create = (title)=> {
     _.url = null
     _.creating = true
     $http({
       method: 'POST',
       url: 'http://ayudh.org:3337/create-set',
       data: JSON.stringify({
-        title: _.title || 'hello',
+        title: title,
         lang_terms: 'en',
         lang_definitions: 'en',
         data: lo.map(_.selected, (v,k)=> lo.pick(v, ['term', 'definition', 'image']))
       })
     }).then(res=>{
-      console.log(res.data)
       _.url = `https://quizlet.com${res.data.url}`
       _.creating = false
+    }).catch(()=>{_.creating=false})
+  }
+  _.import = (importUrl) => {
+    var x = importUrl && importUrl.match(/\d+/)
+    x && x[0] && _.getSets(x[0]).then(res=>{
+      res.data.forEach(set=> {
+        set.terms.forEach(term => {
+          term.selected = true
+          _.selected[term.id] = lo.assign({},term)
+          _.selected[term.id].setId = set.id
+          _.selected[term.id].time = (new Date()).getTime()
+        })
+      })
     })
   }
   _.getTerms = (replace)=> {
@@ -113,7 +129,6 @@ var app = angular.module('deckjam', ['ngMaterial', 'ngMdIcons'])
               })
               terms.forEach((t,i) => t.rank = i)
               if (terms.length > 2){
-                lo.pick(set, ['url', 'title', 'modified_date', 'lang_terms', 'lang_definitions'])
                 _.decks[set.id] = lo.pick(set, ['url', 'title', 'modified_date', 'lang_terms', 'lang_definitions'])
                 _.decks[set.id].terms = terms
                 _.decks[set.id].terms_length = terms.length
