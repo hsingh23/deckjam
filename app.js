@@ -27,6 +27,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
 })
 .controller('homeContainer', ["$scope", "$http", "$mdToast" ,(_, $http, $mdToast)=> {
   _.api = 'http://ayudh.org:3337'
+  _.createdOne = localStorage.createdOne && parseInt(localStorage.createdOne) || 0
   // _.api = 'http://localhost:3337'
   _.getSetsforTerm = (term)=> $http.get(`${_.api}/quizlet/search?query=${term}`, { cache: true})
   _.getSets = (sets)=> $http.get(`${_.api}/quizlet/sets?query=${sets}`, { cache: true})
@@ -107,6 +108,8 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
         $mdToast.showSimple(res.data.error)
       } else {
         $mdToast.showSimple("Your deck is created")
+        _.createdOne += 1
+        localStorage.createdOne = _.createdOne
       }
     }).catch(()=>{
       _.creating=false

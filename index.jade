@@ -70,17 +70,26 @@ html(lang='en')
                           img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}')
                           | {{term.definition}}
           #selected-content(role='tabpanel', aria-labelledby='selected', ng-switch-when='1')
-            md-card(ng-show="helpSelected" ng-init="helpSelected=true")
-              md-card-title
-                md-card-title-text
-                  span.md-headline Your curated cards
-                    md-button(ng-click='helpSelected=!helpSelected')
-                      md-tooltip Hide help
-                      | Ok
-              md-card-content
-                p Your cards are saved between searches and browser reloads. To clear your search results click
-                  md-icon.material-icons(style="color: red") clear_all
-                  | . You can easily import an quizlet set using the import button. Clicking editable allows you to edit flashcards. Once you are ready, create a deck by giving it a name. When your deck is ready, a button will take you to the quizlet deck. Then you can clone the deck into your account to customize it further on quizlet.com.
+            .cards(layout-gt-sm)
+              md-card(ng-show="helpSelected" ng-init="helpSelected=true")
+                md-card-title
+                  md-card-title-text
+                    span.md-headline Your curated cards
+                      md-button(ng-click='helpSelected=!helpSelected')
+                        md-tooltip Hide help
+                        | Ok
+                md-card-content
+                  p Your cards are saved between searches and browser reloads. To clear your search results click
+                    md-icon.material-icons(style="color: red") clear_all
+                    | . You can easily import an quizlet set using the import button. Clicking editable allows you to edit flashcards. Once you are ready, create a deck by giving it a name. When your deck is ready, a button will take you to the quizlet deck. Then you can clone the deck into your account to customize it further on quizlet.com.
+              md-card(ng-if="createdOne")
+                md-card-title
+                  md-card-title-text
+                    span.md-headline Feedback and Support
+                md-card-content
+                  p Thanks for checking out my app. I speant a lot of time making this website robust and beautiful. If you have any ideas on how to make the website better, please feel free to email them to me at hsingh23 @ illinois.edu with the subject Deckjam. 
+                  a(href="https://www.paypal.me/hisingh1") Please donate. 
+                  p And keep learning ;)
             md-card(md-whiteframe="3")
               md-card-actions(layout='row' layout-align="center center" ng-show="selected_actions=='home'" ng-init="selected_actions='home'")
                 md-card-icon-actions
@@ -141,6 +150,7 @@ html(lang='en')
                         md-input-container(style="width:100%" ng-if="selected_edit")
                           textarea(aria-label="definition" ng-model="card.definition" ng-minlength="1" style="width:100%")
                         span(ng-if="!selected_edit") {{card.definition}}
+
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular.js')
     script(src='bloomfilter.js')
     // script(src="https://cdnjs.cloudflare.com/ajax/libs/pouchdb/6.0.7/pouchdb.js")
