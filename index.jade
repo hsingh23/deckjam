@@ -16,11 +16,11 @@ html(lang='en')
     md-toolbar(class="md-hue-1")
       .md-toolbar-tools
         h2( md-truncate) Deckjam
-        form(ng-submit="getTerms(true)" layout="row" layout-align="center center" flex)
+        form(ng-submit="getTerms(true)" layout="row" layout-align="center center" flex analytics-on="submit" analytics-event="Search")
           md-input-container.md-block(md-no-float flex)
             input(ng-model="search" ng-model-options="{debounce: 200}" type="search" placeholder="Smart Search" autofocus ng-submit="getTerms(true)")
-          md-button.md-primary(ng-click="getTerms(true)" md-truncate) swap
-          md-button(ng-click="getTerms(false)" md-truncate) add
+          md-button.md-primary(ng-click="getTerms(true)" md-truncate analytics-on="click" analytics-event="Search") swap
+          md-button(ng-click="getTerms(false)" md-truncate analytics-on="click" analytics-event="Search") add
           md-button.md-icon-button(ng-click="help=!help" ng-init="help=true")
             md-icon.material-icons help
       md-tabs.md-primary(md-stretch-tabs="auto" md-selected='data.selectedIndex')
