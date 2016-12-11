@@ -25,16 +25,16 @@ html(lang='en')
             md-icon.material-icons help
       md-tabs.md-primary(md-stretch-tabs="auto" md-selected='data.selectedIndex')
         md-tab#decks(aria-controls='decks-content') Decks
-        md-tab#selected(aria-controls='selected-content') Selected
+        md-tab#selected(aria-controls='selected-content') {{numSelected()}} Selected
     md-content(flex)
       ui-view(layout='column', layout-fill='', layout-padding='')
         .inset(hide-sm='')
         ng-switch.tabpanel-container(on='data.selectedIndex')
           #decks-content(role='tabpanel' aria-labelledby='decks' ng-switch-when='0')
-            md-card(ng-show="help")
+            md-card(ng-show="help" flex)
               md-card-title
                 md-card-title-text
-                  span.md-headline Welcome to deckjam
+                  span.md-headline Welcome to DeckJam
                     md-button(ng-click='help=!help')
                       md-tooltip Hide help
                       | Ok
@@ -42,6 +42,9 @@ html(lang='en')
                 p Deckjam is a flash card curation tool. Flashcards are proven to improve recognition and recall, yet creating flashcards can be tedious. With deckjam you can pick flashcards from other people public flashcards set on quizlet.com to make your own flashcard set. Once your set is complete you can upload it on quizlet.com.
                 strong Search something in the smart search now to get started!
                 p With deckjam, you can find flashcards that match your expression style. Each search provides relevant results allowing you to quickly build concise learning materials to prepare for tests and also engage in lifelong learning. Since cards are stored on quizlet, you can easily access them anywhere with rich mobile friendly apps and interactive games.
+            //- md-card(flex)
+            //-   md-card-content
+            //-     strong {{numSelected()}} cards selected
             #results(ng-mousedown='md = true' ng-mouseup='md = false' ng-mouseleave='md = false')
               md-card.noselect(ng-repeat='(id, set) in decks' md-whiteframe="3")
                 md-card-title
@@ -142,7 +145,7 @@ html(lang='en')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.1/angular-material.js')
     //- script(src='angular-material-icons.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-aria.min.js')
-    //- script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-messages.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-messages.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-animate.js')
     script(src='lodash.js')
     script(src='app.prod.js')
