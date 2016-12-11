@@ -25,7 +25,7 @@ var app = angular.module('deckjam', ['ngMaterial'])
   $mdThemingProvider.theme('input', 'default')
     .primaryPalette('grey')
 })
-.controller('homeContainer', ["$scope","$http",(_, $http)=> {
+.controller('homeContainer', ["$scope", "$http", "$mdToast" ,(_, $http, $mdToast)=> {
   _.api = 'http://ayudh.org:3337'
   // _.api = 'http://localhost:3337'
   _.getSetsforTerm = (term)=> $http.get(`${_.api}/quizlet/search?query=${term}`, { cache: true})
@@ -36,6 +36,7 @@ var app = angular.module('deckjam', ['ngMaterial'])
   _.selectedOrder = "time"
   _.reverse = true
   _.md = false
+  _.numSelected = ()=> lo.size(_.selected)
   _.selectedArray = ()=> lo.values(_.selected)
   _.selectTerm = (term, setId, mouseDown=true) => {
     term.selected = (!!mouseDown) ? !!!term.selected : !!term.selected
@@ -102,7 +103,15 @@ var app = angular.module('deckjam', ['ngMaterial'])
     }).then(res=>{
       _.url = `https://quizlet.com${res.data.url}`
       _.creating = false
-    }).catch(()=>{_.creating=false})
+      if (res.data.error) {
+        $mdToast.showSimple(res.data.error)
+      } else {
+        $mdToast.showSimple("Your deck is created")
+      }
+    }).catch(()=>{
+      _.creating=false
+      $mdToast.showSimple("Unable to create deck")
+    })
   }
   _.import = (importUrl) => {
     var x = importUrl && importUrl.match(/\d+/)
