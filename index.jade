@@ -104,7 +104,7 @@ html(lang='en')
                 md-input-container.md-block(flex)
                   label Deck name
                   input(ng-model="title" type="text" autofocus required pattern=".{2,}" placeholder='My Deck')
-                md-button.md-primary(ng-click='create(title)' ng-class="{disabled: !!creating}") {{creating? "Creating..." : "Create"} analytics-on="click" analytics-event="Creating"}
+                md-button.md-primary(ng-click='create(title)' ng-class="{disabled: !!creating}" analytics-on="click" analytics-event="Creating") {{creating? "Creating..." : "Create"}}
                 md-button.md-primary(ng-show="url" ng-href="{{url}}" target="_blank" rel="noopener" analytics-on="click" analytics-event="CreatedDeck") Check out your deck!
               md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='import'")
                 md-button(class='md-icon-button' ng-click="selected_actions='home'")
