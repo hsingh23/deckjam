@@ -24,8 +24,8 @@ html(lang='en')
           md-button.md-icon-button(ng-click="help=!help" ng-init="help=true")
             md-icon.material-icons help
       md-tabs.md-primary(md-stretch-tabs="auto" md-selected='data.selectedIndex')
-        md-tab#decks(aria-controls='decks-content') Decks
-        md-tab#selected(aria-controls='selected-content') {{numSelected()}} Selected
+        md-tab#decks(aria-controls='decks-content' analytics-on="click" analytics-event="DecksTab") Decks
+        md-tab#selected(aria-controls='selected-content' analytics-on="click" analytics-event="SelectedTab") {{numSelected()}} Selected
     md-content(flex)
       ui-view(layout='column', layout-fill='', layout-padding='')
         .inset(hide-sm='')
@@ -84,9 +84,9 @@ html(lang='en')
             md-card(md-whiteframe="3")
               md-card-actions(layout='row' layout-align="center center" ng-show="selected_actions=='home'" ng-init="selected_actions='home'")
                 md-card-icon-actions
-                  md-button.md-primary(ng-click="selected_actions='create'") Create
-                  md-button(ng-click="selected_actions='import'") Import
-                  md-button(ng-click="selected_edit=!selected_edit" ng-init="selected_edit = false") Editable
+                  md-button.md-primary(ng-click="selected_actions='create'" analytics-on="click" analytics-event="Create") Create
+                  md-button(ng-click="selected_actions='import'" analytics-on="click" analytics-event="Import") Import
+                  md-switch(ng-model="selected_edit" ng-init="selected_edit = false" analytics-on="click" analytics-event="Editable") Editable
                 md-input-container(layout='row')
                   label Sort By
                   md-select(ng-model="selectedOrder" placeholder="Sort by")
@@ -96,16 +96,17 @@ html(lang='en')
                 md-button.md-icon-button(ng-click='clearSelected()')
                   md-tooltip Clear Selected
                   md-icon.material-icons(style="color: red") clear_all
-              md-card-actions(layout='row' layout-align="center center" ng-show="selected_actions=='create'")
+              md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='create'")
+                md-progress-linear(md-mode="indeterminate" ng-show="creating")
                 md-button(class='md-icon-button' ng-click="selected_actions='home'")
                   md-tooltip Back
                   md-icon.material-icons chevron_left
                 md-input-container.md-block(flex)
                   label Deck name
-                  input(ng-model="title" type="text" autofocus required pattern=".{2,}")
-                md-button.md-primary(ng-click='create(title)' ng-class="{disabled: !!creating}") {{creating? "Creating..." : "Create"}}
-                md-button.md-primary(ng-show="url" ng-href="{{url}}" target="_blank" rel="noopener") Check out your deck!
-              md-card-actions(layout='row' layout-align="center center" ng-show="selected_actions=='import'")
+                  input(ng-model="title" type="text" autofocus required pattern=".{2,}" placeholder='My Deck')
+                md-button.md-primary(ng-click='create(title)' ng-class="{disabled: !!creating}") {{creating? "Creating..." : "Create"} analytics-on="click" analytics-event="Creating"}
+                md-button.md-primary(ng-show="url" ng-href="{{url}}" target="_blank" rel="noopener" analytics-on="click" analytics-event="CreatedDeck") Check out your deck!
+              md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='import'")
                 md-button(class='md-icon-button' ng-click="selected_actions='home'")
                   md-tooltip Back
                   md-icon.material-icons chevron_left
@@ -113,7 +114,7 @@ html(lang='en')
                   label Quizlet url or id
                   input(ng-model="importUrl" autofocus required placeholder='https://quizlet.com/75846167/learning-flash-cards/')
                 md-button.md-primary(ng-click='import(importUrl)') Import
-              md-card-content(style="margin-top:-25px")
+              md-card-content(style="margin-top:-10px")
                 table.table
                   thead
                     tr
@@ -135,7 +136,8 @@ html(lang='en')
                           textarea(aria-label="term" type="text" ng-model="card.term" ng-minlength="1" style="width:100%")
                         span(ng-if="!selected_edit") {{card.term}}
                       td
-                        img(ng-if='card.image', ng-src='{{card.image.url}}')
+                        img(ng-if='card.image' ng-src='{{card.image.url}}')
+                        br(ng-if='card.image')
                         md-input-container(style="width:100%" ng-if="selected_edit")
                           textarea(aria-label="definition" ng-model="card.definition" ng-minlength="1" style="width:100%")
                         span(ng-if="!selected_edit") {{card.definition}}
@@ -149,3 +151,11 @@ html(lang='en')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-animate.js')
     script(src='lodash.js')
     script(src='app.prod.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angulartics-google-analytics/0.4.0/angulartics-ga.min.js')
+    script.
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-88779254-1', 'auto');
+

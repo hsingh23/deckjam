@@ -1,8 +1,11 @@
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
-.md-button{
+.md-button {
   min-width: 20px;
+}
+.bump-lower {
+  margin-top: 30px;
 }
 md-input-container input {
   width: 100%;
