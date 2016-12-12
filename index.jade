@@ -20,28 +20,46 @@ html(lang='en')
           md-input-container.md-block(md-no-float flex)
             input(ng-model="search" ng-model-options="{debounce: 200}" type="search" placeholder="Smart Search" autofocus ng-submit="getTerms(true)")
           md-button.md-primary(ng-click="getTerms(true)" md-truncate analytics-on="click" analytics-event="Search") swap
-          md-button(ng-click="getTerms(false)" md-truncate analytics-on="click" analytics-event="Search") add
-          md-button.md-icon-button(ng-click="help=!help" ng-init="help=true")
-            md-icon.material-icons help
+          //- md-button(ng-click="getTerms(false)" md-truncate analytics-on="click" analytics-event="Search") add
+          //- md-button.md-icon-button(ng-click="help=!help" ng-init="help=true")
+          //-   md-icon.material-icons help
       md-tabs.md-primary(md-stretch-tabs="auto" md-selected='data.selectedIndex')
         md-tab#decks(aria-controls='decks-content' analytics-on="click" analytics-event="DecksTab") Decks
-        md-tab#selected(aria-controls='selected-content' analytics-on="click" analytics-event="SelectedTab") {{numSelected()}} Selected
+        md-tab#selected(aria-controls='selected-content' analytics-on="click" analytics-event="SelectedTab") 
+          strong {{numSelected()}} Selected
     md-content(flex)
       ui-view(layout='column', layout-fill='', layout-padding='')
         .inset(hide-sm='')
         ng-switch.tabpanel-container(on='data.selectedIndex')
           #decks-content(role='tabpanel' aria-labelledby='decks' ng-switch-when='0')
-            md-card(ng-show="help" flex)
-              md-card-title
-                md-card-title-text
-                  span.md-headline Welcome to DeckJam
-                    md-button(ng-click='help=!help')
-                      md-tooltip Hide help
-                      | Ok
-              md-card-content
-                p Deckjam is a flash card curation tool. Flashcards are proven to improve recognition and recall, yet creating flashcards can be tedious. With deckjam you can pick flashcards from other people public flashcards set on quizlet.com to make your own flashcard set. Once your set is complete you can upload it on quizlet.com.
-                strong Search something in the smart search now to get started!
-                p With deckjam, you can find flashcards that match your expression style. Each search provides relevant results allowing you to quickly build concise learning materials to prepare for tests and also engage in lifelong learning. Since cards are stored on quizlet, you can easily access them anywhere with rich mobile friendly apps and interactive games.
+            div(layout-gt-sm="row" layout-align="center center")
+              md-card(ng-show="help" ng-init="help=true" flex style="max-width:500px")
+                md-card-title
+                  md-card-title-text
+                    span.md-headline Welcome to DeckJam
+                      md-button(ng-click='help=!help')
+                        md-tooltip Hide help
+                        | Ok
+                md-card-content
+                  p Deckjam is a flash card curation tool. Flashcards are proven to improve recognition and recall, yet creating flashcards can be tedious. With deckjam you can pick flashcards from other people public flashcards set on quizlet.com to make your own flashcard set. Once your set is complete you can upload it on quizlet.com.
+                  h3(ng-show="numDecks()==0") Search something in the smart search now to get started!
+                  h3(ng-show="numDecks()!=0") Now click or drag over cards to select them for you deck
+                  h3(ng-show="numSelected()>0") When you are ready - click the SELECTED tab
+                    md-button(ng-click='data.selectedIndex=1')
+                      md-tooltip Selected
+                      | Selected
+              md-card(ng-show="helpAdditional && numDecks()==0" ng-init="helpAdditional=true" flex style="max-width:500px")
+                md-card-title
+                  md-card-title-text
+                    span.md-headline FAQ
+                      md-button(ng-click='helpAdditional=!helpAdditional')
+                        md-tooltip Hide help
+                        | Ok
+                md-card-content
+                  strong Why Deckjam?
+                  p With deckjam, you can find flashcards that match your expression style. Each search provides relevant results allowing you to quickly build concise learning materials to prepare for tests and also engage in lifelong learning. Since cards are stored on quizlet, you can easily access them anywhere with rich mobile friendly apps and interactive games.
+                  strong Why is it called deckjam?
+                  p This app lets you pack together your favorite flashcards. It allows for improvised creation and curation of study material. Since the end product is a flashcard deck, deckjam just made sense.
             //- md-card(flex)
             //-   md-card-content
             //-     strong {{numSelected()}} cards selected
@@ -151,18 +169,23 @@ html(lang='en')
                           textarea(aria-label="definition" ng-model="card.definition" ng-minlength="1" style="width:100%")
                         span(ng-if="!selected_edit") {{card.definition}}
 
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular.js')
     script(src='bloomfilter.js')
-    // script(src="https://cdnjs.cloudflare.com/ajax/libs/pouchdb/6.0.7/pouchdb.js")
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.1/angular-material.js')
-    //- script(src='angular-material-icons.min.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-aria.min.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-messages.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-animate.js')
     script(src='lodash.js')
+    //- local
+    script(src='angular.js')
+    script(src='angular-material.min.js')
+    script(src='angular-aria.min.js')
+    script(src='angular-messages.js')
+    script(src='angular-animate.min.js')
+    //- prod
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular.js')
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.1/angular-material.js')
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-aria.min.js')
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-messages.js')
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-animate.js')
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/angulartics/1.3.0/angulartics.min.js')
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/angulartics-google-analytics/0.4.0/angulartics-ga.min.js')
     script(src='app.prod.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/angulartics/1.3.0/angulartics.min.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/angulartics-google-analytics/0.4.0/angulartics-ga.min.js')
     script.
       var user = window.localStorage.user || Math.random().toString(36).substring(7);
       window.localStorage.user = user;
