@@ -28,8 +28,9 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
 })
 .controller('homeContainer', ["$scope", "$http", "$mdToast" ,(_, $http, $mdToast)=> {
   _.api = 'http://ayudh.org:3337'
-  _.createdOne = localStorage.createdOne && parseInt(localStorage.createdOne) || 0
   // _.api = 'http://localhost:3337'
+  _.createdOne = localStorage.createdOne && parseInt(localStorage.createdOne) || 0
+  _.fetching = false
   _.getSetsforTerm = (term)=> $http.get(`${_.api}/quizlet/search?query=${term}`, { cache: true})
   _.getSets = (sets)=> $http.get(`${_.api}/quizlet/sets?query=${sets}`, { cache: true})
   _.decks = {}
@@ -119,8 +120,10 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     })
   }
   _.import = (importUrl) => {
+    _.fetching = true
     var x = importUrl && importUrl.match(/\d+/)
     x && x[0] && _.getSets(x[0]).then(res=>{
+      _.fetching = false
       res.data.forEach(set=> {
         set.terms.forEach(term => {
           term.selected = true
@@ -129,10 +132,11 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
           _.selected[term.id].time = (new Date()).getTime()
         })
       })
-    })
+    }).catch(()=>{_.fetching = false})
     localStorage.selected = JSON.stringify(_.selected)
   }
   _.getTerms = (replace)=> {
+    _.fetching = true
     _.decks = !!replace ? {} : (_.decks || {})
     _.bloom = !!replace ? new BloomFilter(3e5, 3e-5) : (_.bloom || new BloomFilter(3e5, 3e-5))
     _.search.split(',').forEach(term=> {
@@ -155,9 +159,11 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
                 _.decks[set.id].terms_length = terms.length
               }
             })
+            _.fetching = false
+            _.selectedIndex=0
             // localStorage.decks = JSON.stringify(_.decks)
-          })
-        })
+          }).catch(()=>{_.fetching = false})
+        }).catch(()=>{_.fetching = false})
       })
     }
 }])

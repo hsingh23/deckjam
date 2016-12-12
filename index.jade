@@ -17,6 +17,7 @@ html(lang='en')
       .md-toolbar-tools
         h2( md-truncate ng-click="data.selectedIndex=0") Deckjam
         form(ng-submit="getTerms(true)" layout="row" layout-align="center center" flex analytics-on="submit" analytics-event="Search")
+          md-progress-linear(md-mode="indeterminate" ng-show="fetching")
           md-input-container.md-block(md-no-float flex)
             input(ng-model="search" ng-model-options="{debounce: 200}" type="search" placeholder="Flashcards for: " autofocus ng-submit="getTerms(true)")
           md-button.md-primary(ng-click="getTerms(true)" md-truncate analytics-on="click" analytics-event="Search")
@@ -48,7 +49,7 @@ html(lang='en')
                   h3(ng-show="numDecks()!=0") Now click or drag over cards to select them for you deck
                   h3(ng-show="numSelected()>0") When you are ready - click the SELECTED tab
                     md-button(ng-click='data.selectedIndex=1')
-                      md-tooltip Selected
+                      md-tooltip The selected tab is in the top blue navbar
                       | Selected
               md-card(ng-show="helpAdditional && numDecks()==0" ng-init="helpAdditional=true" flex style="max-width:500px")
                 md-card-title
@@ -66,7 +67,7 @@ html(lang='en')
             //-   md-card-content
             //-     strong {{numSelected()}} cards selected
             #results(ng-mousedown='md = true' ng-mouseup='md = false' ng-mouseleave='md = false')
-              md-card.noselect(ng-repeat='(id, set) in decks' md-whiteframe="3")
+              md-card.noselect(ng-repeat='(id, set) in decks track by $index' md-whiteframe="3")
                 md-card-title
                   md-card-title-text
                     span.md-headline {{set.title}}
@@ -126,9 +127,10 @@ html(lang='en')
                 md-button(class='md-icon-button' ng-click="selected_actions='home'")
                   md-tooltip Back
                   md-icon.material-icons chevron_left
-                md-input-container.md-block(flex)
-                  label Deck name
-                  input(ng-model="title" type="text" autofocus required pattern=".{2,}" placeholder='My Deck')
+                form(ng-submit="create(title)")
+                  md-input-container.md-block(flex)
+                    label Deck name
+                    input(ng-model="title" type="text" autofocus required pattern=".{2,}" placeholder='My Deck')
                 md-button.md-primary(ng-click='create(title)' ng-class="{disabled: !!creating}" analytics-on="click" analytics-event="Creating") {{creating? "Creating..." : "Create"}}
                 md-button.md-primary(ng-show="url" ng-href="{{url}}" target="_blank" rel="noopener" analytics-on="click" analytics-event="CreatedDeck") Check out your deck!
               md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='import'")
@@ -183,7 +185,7 @@ html(lang='en')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-animate.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angulartics/1.3.0/angulartics.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angulartics-google-analytics/0.4.0/angulartics-ga.min.js')
-      
+
     script(src='app.prod.js')
     script.
       var user = window.localStorage.user || Math.random().toString(36).substring(7);
