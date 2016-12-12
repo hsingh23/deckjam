@@ -141,7 +141,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     _.bloom = !!replace ? new BloomFilter(3e5, 3e-5) : (_.bloom || new BloomFilter(3e5, 3e-5))
     _.search.split(',').forEach(term=> {
       _.getSetsforTerm(term.trim()).then(data=> {
-        _.getSets(data.data.sets.map(a=>a.id).join(','))
+        _.getSets(data.data.sets.slice(0,20).map(a=>a.id).join(','))
           .then(res => {
             res.data.forEach(set=> {
               var terms = lo.filter(set.terms, card=> {
