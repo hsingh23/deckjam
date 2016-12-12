@@ -8,7 +8,8 @@ if (location.protocol != 'http:') {
 // removed service workers and fetch because quizlet does not do cors http://stackoverflow.com/a/34940074 
 // no-cors mode won't send authorization header https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
 var lo = _;
-var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.google.analytics'])
+// var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.google.analytics'])
+var app = angular.module('deckjam', ['ngMaterial'])
 .config(function($mdThemingProvider) {
   var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
     'contrastDefaultColor': 'light',
@@ -38,6 +39,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   _.reverse = true
   _.md = false
   _.numSelected = ()=> lo.size(_.selected)
+  _.numDecks = ()=> lo.size(_.decks)
   _.selectedArray = ()=> lo.values(_.selected)
   _.selectTerm = (term, setId, mouseDown=true) => {
     term.selected = (!!mouseDown) ? !!!term.selected : !!term.selected
