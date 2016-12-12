@@ -15,10 +15,10 @@ html(lang='en')
   body(ng-app='deckjam' ng-controller='homeContainer' layout="column" layout-fill ng-cloak)
     md-toolbar(class="md-hue-1")
       .md-toolbar-tools
-        h2( md-truncate) Deckjam
+        h2( md-truncate ng-click="data.selectedIndex=0") Deckjam
         form(ng-submit="getTerms(true)" layout="row" layout-align="center center" flex analytics-on="submit" analytics-event="Search")
           md-input-container.md-block(md-no-float flex)
-            input(ng-model="search" ng-model-options="{debounce: 200}" type="search" placeholder="Smart Search" autofocus ng-submit="getTerms(true)")
+            input(ng-model="search" ng-model-options="{debounce: 200}" type="search" placeholder="Flashcards for: " autofocus ng-submit="getTerms(true)")
           md-button.md-primary(ng-click="getTerms(true)" md-truncate analytics-on="click" analytics-event="Search")
             md-tooltip Search
             md-icon.material-icons search
@@ -44,7 +44,7 @@ html(lang='en')
                         | Ok
                 md-card-content
                   p Deckjam is a flash card curation tool. Flashcards are proven to improve recognition and recall, yet creating flashcards can be tedious. With deckjam you can pick flashcards from other people public flashcards set on quizlet.com to make your own flashcard set. Once your set is complete you can upload it on quizlet.com.
-                  h3(ng-show="numDecks()==0") Search something in the smart search now to get started!
+                  h3(ng-show="numDecks()==0") Search quizlet flashcards for Chemistry, Factor analysis, entropy, Abraham Lincoln, etc in the search above to get started.
                   h3(ng-show="numDecks()!=0") Now click or drag over cards to select them for you deck
                   h3(ng-show="numSelected()>0") When you are ready - click the SELECTED tab
                     md-button(ng-click='data.selectedIndex=1')
@@ -99,9 +99,7 @@ html(lang='en')
                         md-tooltip Hide help
                         | Ok
                 md-card-content
-                  p Your cards are saved between searches and browser reloads. To clear your search results click
-                    md-icon.material-icons(style="color: red") clear_all
-                    | . You can easily import an quizlet set using the import button. Clicking editable allows you to edit flashcards. Once you are ready, create a deck by giving it a name. When your deck is ready, a button will take you to the quizlet deck. Then you can clone the deck into your account to customize it further on quizlet.com.
+                  p Your cards are saved between searches and browser reloads. You can easily import an quizlet set using the import button. Clicking editable allows you to edit flashcards. Once you are ready, create a deck by giving it a name. When your deck is ready, a button will take you to the quizlet deck. Then you can clone the deck into your account to customize it further on quizlet.com.
               md-card(ng-if="createdOne")
                 md-card-title
                   md-card-title-text
@@ -122,9 +120,7 @@ html(lang='en')
                     md-option(value="time") time
                     md-option(value="term") term
                 md-button(ng-click="reverse=!reverse") Flip
-                md-button.md-icon-button(ng-click='clearSelected()')
-                  md-tooltip Clear Selected
-                  md-icon.material-icons(style="color: red") clear_all
+                md-button(ng-click='clearSelected()' style="color: red") Clear Selected
               md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='create'")
                 md-progress-linear(md-mode="indeterminate" ng-show="creating")
                 md-button(class='md-icon-button' ng-click="selected_actions='home'")
