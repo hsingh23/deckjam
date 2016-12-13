@@ -26,8 +26,21 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   $mdThemingProvider.theme('input', 'default')
     .primaryPalette('grey')
 })
-.controller('homeContainer', ["$scope", "$http", "$mdToast" ,(_, $http, $mdToast)=> {
+.directive('iconText', function($mdMedia) {
+  return {
+    restrict: 'E',
+    scope: {
+      tip: '@',
+      icon: '@',
+      style: '@?'
+    },
+    template: '<md-tooltip style="{{style}}" hide-gt-xs="hide-gt-xs">{{tip}}</md-tooltip><md-icon hide-gt-xs="hide-gt-xs" class="material-icons" style="{{style}}">{{icon}}</md-icon><span style="{{style}}" hide-xs>{{tip}}</span>'
+  }
+})
+.controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia" ,(_, $http, $mdToast, $mdMedia)=> {
   _.api = 'http://ayudh.org:3337'
+  _._sm = !$mdMedia('sm')
+  _.sm = $mdMedia('sm')
   // _.api = 'http://localhost:3337'
   _.createdOne = localStorage.createdOne && parseInt(localStorage.createdOne) || 0
   _.fetching = false
