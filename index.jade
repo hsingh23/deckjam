@@ -82,10 +82,13 @@ html(lang='en')
                   table.table
                     thead
                       tr
+                        th
                         th Terms
                         th Definitions
                     tbody
-                      tr(ng-class='{success: !!term.selected}' ng-repeat='(id2, term) in set.terms' ng-mouseover='selectTerm(term, id, md)' ng-mousedown='selectTerm(term, id)')
+                      tr(ng-class='{success: term.selected}' ng-repeat='(id2, term) in set.terms' ng-mouseover='selectTerm(term, id, md)' ng-mousedown='selectTerm(term, id)')
+                        td
+                          md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
                         td {{term.term}}
                         td
                           img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}')
@@ -127,7 +130,7 @@ html(lang='en')
                 md-button(class='md-icon-button' ng-click="selected_actions='home'")
                   md-tooltip Back
                   md-icon.material-icons chevron_left
-                form(ng-submit="create(title)")
+                form(ng-submit="create(title)" layout="row" layout-align="center center" flex)
                   md-input-container.md-block(flex)
                     label Deck name
                     input(ng-model="title" type="text" autofocus required pattern=".{2,}" placeholder='My Deck')
@@ -146,7 +149,6 @@ html(lang='en')
                   thead
                     tr
                       th
-                        md-icon.material-icons more_horiz
                       th Terms
                       th Definitions
                   tbody
