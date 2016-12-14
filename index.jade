@@ -13,16 +13,16 @@ html(lang='en')
     link(rel='stylesheet', href='style.css')
 
   body(ng-app='deckjam' ng-controller='homeContainer' layout="column" layout-fill ng-cloak)
-    md-toolbar(class="md-hue-1")
+    md-toolbar(class="md-hue-1" md-scroll-shrink='true')
       .md-toolbar-tools
         h2( md-truncate ng-click="data.selectedIndex=0") Deckjam
-        form(ng-submit="getTerms()" layout="row" layout-align="center center" flex analytics-on="submit" analytics-event="Search")
-          md-progress-linear(md-mode="indeterminate" ng-show="fetching")
-          md-input-container.md-block(md-no-float flex)
-            input(ng-model="search" type="search" placeholder="Flashcards for: Chemistry")
-          md-button.md-primary(ng-click="getTerms()" md-truncate analytics-on="click" analytics-event="Search")
-            md-tooltip Search
-            md-icon.material-icons search
+        //- form(ng-submit="getTerms()" layout="row" layout-align="center center" flex analytics-on="submit" analytics-event="Search")
+        md-progress-linear(md-mode="indeterminate" ng-show="fetching")
+        md-input-container.md-block(md-no-float flex)
+          input(ng-model="search" type="search" placeholder="Flashcards for: Chemistry")
+        md-button.md-primary(ng-click="getTerms()" md-truncate analytics-on="click" analytics-event="Search")
+          md-tooltip Search
+          md-icon.material-icons search
           //- md-button(ng-click="getTerms(false)" md-truncate analytics-on="click" analytics-event="Search") add
           //- md-button.md-icon-button(ng-click="help=!help" ng-init="help=true")
           //-   md-icon.material-icons help
@@ -170,17 +170,17 @@ html(lang='en')
     script(src='bloomfilter.js')
     script(src='lodash.js')
     //- local
-    script(src='angular.js')
-    script(src='angular-material.min.js')
-    script(src='angular-aria.min.js')
-    script(src='angular-messages.js')
-    script(src='angular-animate.min.js')
+      script(src='angular.js')
+      script(src='angular-material.min.js')
+      script(src='angular-aria.min.js')
+      script(src='angular-messages.js')
+      script(src='angular-animate.min.js')
     //- prod
-      script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular.js')
-      script(src='https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.1/angular-material.js')
-      script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-aria.min.js')
-      script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-messages.js')
-      script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-animate.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.1/angular-material.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-aria.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-messages.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-animate.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angulartics/1.3.0/angulartics.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angulartics-google-analytics/0.4.0/angulartics-ga.min.js')
 
