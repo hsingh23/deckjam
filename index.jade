@@ -13,7 +13,7 @@ html(lang='en')
     link(rel='stylesheet', href='style.css')
 
   body(ng-app='deckjam' ng-controller='homeContainer' layout="column" layout-fill ng-cloak)
-    md-toolbar(class="md-hue-1")
+    md-toolbar(class="md-hue-1" md-scroll-shrink='true')
       .md-toolbar-tools
         h2( md-truncate ng-click="data.selectedIndex=0") Deckjam
         form(ng-submit="getTerms()" layout="row" layout-align="center center" flex analytics-on="submit" analytics-event="Search")
