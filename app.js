@@ -194,7 +194,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       })
       _.fetching = false
       _.selectedIndex=0
-      // localStorage.decks = JSON.stringify(_.decks)
+      localStorage.decks = JSON.stringify(_.decks)
     }).catch(()=>{
       _.fetching = false
       $mdToast.showSimple("Unable to get terms - try another query")
