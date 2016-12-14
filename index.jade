@@ -85,11 +85,12 @@ html(lang='en')
                     tbody
                       tr(ng-class='{success: term.selected}' ng-repeat='(id2, term) in set.terms' ng-mouseover='selectDragTerm(term, id, md)' ng-mousedown='selectDragTerm(term, id)')
                         td
-                          md-button(ng-click='selectClickTerm(term, id)')
+                          md-button(ng-click='selectClickTerm(term, id)' md-no-ink="true")
                             md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
                         td {{term.term}}
                         td
-                          img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}')
+                          img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}' width="100%")
+                          br(ng-if='term.image.url')
                           | {{term.definition}}
             md-card
               md-card-content
