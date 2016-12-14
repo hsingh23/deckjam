@@ -67,7 +67,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   _.selectedOrder = "time"
   _.reverse = true
   _.md = false
-  _.searched = ""
+  _.searched = "your last search term"
   _.numSelected = ()=> lo.size(_.selected)
   _.numDecks = ()=> lo.size(_.decks)
   _.selectedArray = ()=> lo.values(_.selected)
