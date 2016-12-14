@@ -19,7 +19,7 @@ html(lang='en')
         form(ng-submit="getTerms()" layout="row" layout-align="center center" flex analytics-on="submit" analytics-event="Search")
           md-progress-linear(md-mode="indeterminate" ng-show="fetching")
           md-input-container.md-block(md-no-float flex)
-            input(ng-model="search" type="search" placeholder="Flashcards for: Chemistry" lose-focus="losefocus" autofocus)
+            input(ng-model="search" type="search" placeholder="Flashcards for: Chemistry" lose-focus="losefocus")
         md-button.md-primary(ng-click="getTerms()" md-truncate analytics-on="click" analytics-event="Search")
           md-tooltip Search
           md-icon.material-icons search
