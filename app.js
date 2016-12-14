@@ -56,8 +56,6 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
 })
 .controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia" ,(_, $http, $mdToast, $mdMedia)=> {
   _.api = 'http://ayudh.org:3337'
-  _._sm = ()=> !$mdMedia('md')
-  _.sm = ()=> $mdMedia('md')
   _.losefocus = false
   // _.api = 'http://localhost:3337'
   _.createdOne = localStorage.createdOne && parseInt(localStorage.createdOne) || 0
@@ -73,6 +71,9 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   _.numDecks = ()=> lo.size(_.decks)
   _.selectedArray = ()=> lo.values(_.selected)
   _.startIndexes = {}
+  if(_.numSelected() > 0){
+    $mdToast.showSimple(`You have ${_.numSelected()} cards selected. Remember to clear them if you are making a new set.`)
+  }
   function selectTerm(term, setId) {
     if (term.selected) {
       _.selected[term.id] = lo.assign({},term)
@@ -84,15 +85,15 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     localStorage.selected = JSON.stringify(_.selected)
   }
   _.selectClickTerm = (term, setId) => {
-    // checkbox check in small, whole rows checks >sm
-    if(!$mdMedia('md')) {
+    // checkbox check for tablet and below
+    if(!$mdMedia('gt-md')) {
       term.selected = !term.selected
       selectTerm(term, setId)
     }
   }
   _.selectDragTerm = (term, setId, mouseDown=true) => {
-    // checkbox check in small, whole rows checks >sm
-    if($mdMedia('md')){
+    // drag anywhere for above that
+    if($mdMedia('gt-md')){
       term.selected = (mouseDown) ? !term.selected : term.selected
       selectTerm(term, setId)
     }
@@ -207,6 +208,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       _.fetching = false
       _.selectedIndex=0
       localStorage.decks = JSON.stringify(_.decks)
+      $mdToast.showSimple(_.numDecks() + " Quizlet decks loaded. Click the checkbox to choose a card.")
     }).catch(()=>{
       _.fetching = false
       $mdToast.showSimple("Unable to get terms - try another query")

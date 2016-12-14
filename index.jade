@@ -36,10 +36,7 @@ html(lang='en')
         ng-switch.tabpanel-container(on='data.selectedIndex')
           #decks-content(role='tabpanel' aria-labelledby='decks' ng-switch-when='0')
             div(layout="column" layout-align="center center" layout-gt-sm="row" layout-align-gt-sm="center")
-              md-card(ng-show="help" ng-init="help=true" flex style="max-width:500px")
-                //- md-card-title
-                //-   md-card-title-text
-                //-     span.md-headline 
+              md-card(ng-show="help" ng-init="help=true" flex style="max-width:600px")
                 md-card-content
                   h2 Welcome to Deckjam
                   h3 Deckjam is a flash card curation tool. 
@@ -85,7 +82,7 @@ html(lang='en')
                     tbody
                       tr(ng-class='{success: term.selected}' ng-repeat='(id2, term) in set.terms' ng-mouseover='selectDragTerm(term, id, md)' ng-mousedown='selectDragTerm(term, id)')
                         td
-                          md-button(ng-click='selectClickTerm(term, id)' md-no-ink="true")
+                          md-button.md-icon-button(ng-click='selectClickTerm(term, id)' md-no-ink="true")
                             md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
                         td {{term.term}}
                         td
