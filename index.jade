@@ -60,6 +60,9 @@ html(lang='en')
             //- md-card(flex)
             //-   md-card-content
             //-     strong {{numSelected()}} cards selected
+            md-card
+              md-card-content
+                h3 {{numDecks()}} Quizlet decks
             #results(ng-mousedown='md = true' ng-mouseup='md = false' ng-mouseleave='md = false')
               md-card.noselect(ng-repeat='(id, set) in decks track by $index' md-whiteframe="3")
                 md-card-title
@@ -80,9 +83,10 @@ html(lang='en')
                         th Terms
                         th Definitions
                     tbody
-                      tr(ng-class='{success: term.selected}' ng-repeat='(id2, term) in set.terms' ng-mouseover='selectTerm(term, id, md)' ng-mousedown='selectTerm(term, id)')
+                      tr(ng-class='{success: term.selected}' ng-repeat='(id2, term) in set.terms' ng-mouseover='selectDragTerm(term, id, md)' ng-mousedown='selectDragTerm(term, id)')
                         td
-                          md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
+                          md-button(ng-click='selectClickTerm(term, id)')
+                            md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
                         td {{term.term}}
                         td
                           img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}')
@@ -123,8 +127,7 @@ html(lang='en')
                   md-input-container.md-block(flex)
                     label Deck name
                     input(ng-model="title" type="text" autofocus required pattern=".{2,}" placeholder='My Deck')
-                md-button.md-primary.md-raised(ng-click='create(title)' ng-class="{disabled: !!creating}" analytics-on="click" analytics-event="Creating") {{creating? "Creating..." : "Create"}}
-                md-button.md-primary.md-raised(ng-show="url" ng-href="{{url}}" target="_blank" rel="noopener" analytics-on="click" analytics-event="CreatedDeck") Check out your deck!
+                md-button.md-primary(ng-click='create(title)' ng-class="{disabled: !!creating}" analytics-on="click" analytics-event="Creating") {{creating? "Creating..." : "Create"}}
               md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='import'")
                 md-button.md-raised(class='md-icon-button' ng-click="selected_actions='home'")
                   md-tooltip Back
@@ -132,8 +135,9 @@ html(lang='en')
                 md-input-container.md-block(flex)
                   label Quizlet url or id
                   input(ng-model="importUrl" autofocus required placeholder='https://quizlet.com/75846167/learning-flash-cards/')
-                md-button.md-primary.md-raised(ng-click='import(importUrl)') Import
+                md-button.md-primary(ng-click='import(importUrl)') Import
               md-card-content(style="margin-top:-10px")
+                md-button.md-primary.md-raised(ng-show="url" ng-href="{{url}}" target="_blank" rel="noopener" analytics-on="click" analytics-event="CreatedDeck") Check out your deck!
                 table.table
                   thead
                     tr
