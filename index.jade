@@ -13,13 +13,13 @@ html(lang='en')
     link(rel='stylesheet', href='style.css')
 
   body(ng-app='deckjam' ng-controller='homeContainer' layout="column" layout-fill ng-cloak)
-    md-toolbar(class="md-hue-1" md-scroll-shrink='true')
+    md-toolbar(class="md-hue-1")
       .md-toolbar-tools
         h2( md-truncate ng-click="data.selectedIndex=0") Deckjam
-        //- form(ng-submit="getTerms()" layout="row" layout-align="center center" flex analytics-on="submit" analytics-event="Search")
-        md-progress-linear(md-mode="indeterminate" ng-show="fetching")
-        md-input-container.md-block(md-no-float flex)
-          input(ng-model="search" type="search" placeholder="Flashcards for: Chemistry")
+        form(ng-submit="getTerms()" layout="row" layout-align="center center" flex analytics-on="submit" analytics-event="Search")
+          md-progress-linear(md-mode="indeterminate" ng-show="fetching")
+          md-input-container.md-block(md-no-float flex)
+            input(ng-model="search" type="search" placeholder="Flashcards for: Chemistry" lose-focus="losefocus" autofocus)
         md-button.md-primary(ng-click="getTerms()" md-truncate analytics-on="click" analytics-event="Search")
           md-tooltip Search
           md-icon.material-icons search

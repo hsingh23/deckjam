@@ -43,10 +43,22 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     <span style="{{style}}" hide-xs>{{tip}}</span>`
   }
 })
+.directive('loseFocus', function() {
+  return {
+    link: function(scope, element, attrs) {
+      scope.$watch(attrs.loseFocus, function(value) {
+        if(value === true) {
+          element[0].blur()
+        }
+      })
+    }
+  }
+})
 .controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia" ,(_, $http, $mdToast, $mdMedia)=> {
   _.api = 'http://ayudh.org:3337'
   _._sm = ()=> !$mdMedia('md')
   _.sm = ()=> $mdMedia('md')
+  _.losefocus = false
   // _.api = 'http://localhost:3337'
   _.createdOne = localStorage.createdOne && parseInt(localStorage.createdOne) || 0
   _.fetching = false
@@ -201,6 +213,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     })
   }
   _.getTerms = (replace=true, replaceBloom=true)=> {
+    _.losefocus = true
     var startIndex = 0;
     _.fetching = true
     _.decks = !!replace ? {} : (_.decks || {})
