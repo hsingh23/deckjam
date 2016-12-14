@@ -16,11 +16,11 @@ html(lang='en')
     md-toolbar(class="md-hue-1")
       .md-toolbar-tools
         h2( md-truncate ng-click="data.selectedIndex=0") Deckjam
-        form(ng-submit="getTerms(true)" layout="row" layout-align="center center" flex analytics-on="submit" analytics-event="Search")
+        form(ng-submit="getTerms()" layout="row" layout-align="center center" flex analytics-on="submit" analytics-event="Search")
           md-progress-linear(md-mode="indeterminate" ng-show="fetching")
           md-input-container.md-block(md-no-float flex)
-            input(ng-model="search" ng-model-options="{debounce: 200}" type="search" placeholder="Flashcards for: Chemistry" autofocus ng-submit="getTerms(true)")
-          md-button.md-primary(ng-click="getTerms(true)" md-truncate analytics-on="click" analytics-event="Search")
+            input(ng-model="search" type="search" placeholder="Flashcards for: Chemistry" autofocus)
+          md-button.md-primary(ng-click="getTerms()" md-truncate analytics-on="click" analytics-event="Search")
             md-tooltip Search
             md-icon.material-icons search
           //- md-button(ng-click="getTerms(false)" md-truncate analytics-on="click" analytics-event="Search") add
@@ -91,6 +91,9 @@ html(lang='en')
                         td
                           img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}')
                           | {{term.definition}}
+            md-card
+              md-card-content
+                md-button.md-primary.md-raised(ng-click="getTerms(true, false)" analytics-on="click" analytics-event="Load Next") Load next
           #selected-content(role='tabpanel', aria-labelledby='selected', ng-switch-when='1')
             .cards(layout-gt-sm)
               md-card(ng-show="helpSelected" ng-init="helpSelected=true")

@@ -60,6 +60,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   _.numSelected = ()=> lo.size(_.selected)
   _.numDecks = ()=> lo.size(_.decks)
   _.selectedArray = ()=> lo.values(_.selected)
+  _.startIndexes = {}
   function selectTerm(term, setId) {
     if (term.selected) {
       _.selected[term.id] = lo.assign({},term)
@@ -193,20 +194,23 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       })
       _.fetching = false
       _.selectedIndex=0
-      localStorage.decks = JSON.stringify(_.decks)
+      // localStorage.decks = JSON.stringify(_.decks)
     }).catch(()=>{
       _.fetching = false
       $mdToast.showSimple("Unable to get terms - try another query")
     })
   }
-  _.getTerms = (replace)=> {
+  _.getTerms = (replace=true, replaceBloom=true)=> {
+    var startIndex = 0;
     _.fetching = true
     _.decks = !!replace ? {} : (_.decks || {})
-    _.bloom = !!replace ? new BloomFilter(3e5, 3e-5) : (_.bloom || new BloomFilter(3e5, 3e-5))
+    _.bloom = !!replaceBloom ? new BloomFilter(3e5, 3e-5) : (_.bloom || new BloomFilter(3e5, 3e-5))
     _.search.split(',').forEach(term=> {
       _.getSetsforTerm(term.trim()).then(res=> {
-        getSets(res.data.sets.slice(0,10))
-        getSets(res.data.sets.slice(10,20))
+        _.startIndexes[term] = _.startIndexes[term] || 0
+        startIndex = _.startIndexes[term]
+        getSets(res.data.sets.slice(startIndex,startIndex+10))
+        _.startIndexes[term] = _.startIndexes[term] + 10
       })
       .catch(()=>{
         _.fetching = false
