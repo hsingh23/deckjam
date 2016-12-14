@@ -67,6 +67,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   _.selectedOrder = "time"
   _.reverse = true
   _.md = false
+  _.searched = ""
   _.numSelected = ()=> lo.size(_.selected)
   _.numDecks = ()=> lo.size(_.decks)
   _.selectedArray = ()=> lo.values(_.selected)
@@ -222,6 +223,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     _.bloom = !!replaceBloom ? new BloomFilter(3e5, 3e-5) : (_.bloom || new BloomFilter(3e5, 3e-5))
     var term = _.search.trim()
     if(term.length > 2){
+      _.searched = term
       _.getSetsforTerm(term.trim()).then(res=> {
         _.startIndexes[term] = _.startIndexes[term] || 0
         startIndex = _.startIndexes[term]

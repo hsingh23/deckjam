@@ -59,7 +59,7 @@ html(lang='en')
             //-     strong {{numSelected()}} cards selected
             md-card
               md-card-content
-                h3 {{numDecks()}} Quizlet decks
+                h3 Found {{numDecks()}} Quizlet decks containing {{searched}}
             #results(ng-mousedown='md = true' ng-mouseup='md = false' ng-mouseleave='md = false')
               md-card.noselect(ng-repeat='(id, set) in decks track by $index' md-whiteframe="3")
                 md-card-title
