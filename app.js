@@ -205,7 +205,8 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     _.fetching = true
     _.decks = !!replace ? {} : (_.decks || {})
     _.bloom = !!replaceBloom ? new BloomFilter(3e5, 3e-5) : (_.bloom || new BloomFilter(3e5, 3e-5))
-    _.search.split(',').forEach(term=> {
+    var term = _.search.trim()
+    if(term.length > 2){
       _.getSetsforTerm(term.trim()).then(res=> {
         _.startIndexes[term] = _.startIndexes[term] || 0
         startIndex = _.startIndexes[term]
@@ -216,6 +217,6 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
         _.fetching = false
         $mdToast.showSimple("Unable to get terms - try another query")
       })
-    })
+    }
   }
 }])

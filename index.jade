@@ -31,7 +31,7 @@ html(lang='en')
         md-tab#selected(aria-controls='selected-content' analytics-on="click" analytics-event="SelectedTab") 
           strong {{numSelected()}} Selected
     md-content(flex)
-      ui-view(layout='column', layout-fill='', layout-padding='')
+      ui-view(layout='column' layout-fill='')
         .inset(hide-sm='')
         ng-switch.tabpanel-container(on='data.selectedIndex')
           #decks-content(role='tabpanel' aria-labelledby='decks' ng-switch-when='0')
@@ -89,7 +89,7 @@ html(lang='en')
                             md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
                         td {{term.term}}
                         td
-                          img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}' width="100%")
+                          img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}' style="max-width: 100%")
                           br(ng-if='term.image.url')
                           | {{term.definition}}
             md-card
@@ -162,7 +162,7 @@ html(lang='en')
                           textarea(aria-label="term" type="text" ng-model="card.term" ng-minlength="1" style="width:100%")
                         span(ng-if="!selected_edit") {{card.term}}
                       td
-                        img(ng-if='card.image' ng-src='{{card.image.url}}')
+                        img(ng-if='card.image' ng-src='{{card.image.url}}' style="max-width: 100%" draggable="false")
                         br(ng-if='card.image')
                         md-input-container(style="width:100%" ng-if="selected_edit")
                           textarea(aria-label="definition" ng-model="card.definition" ng-minlength="1" style="width:100%")
