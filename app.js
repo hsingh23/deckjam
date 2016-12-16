@@ -54,7 +54,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     }
   }
 })
-.controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia" ,(_, $http, $mdToast, $mdMedia)=> {
+.controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", (_, $http, $mdToast, $mdMedia, $analytics)=> {
   _.api = 'http://ayudh.org:3337'
   _.losefocus = false
   // _.api = 'http://localhost:3337'
@@ -130,6 +130,14 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     _.selected[id].term = definition
     localStorage.selected = JSON.stringify(_.selected)
   }
+  _.swapDeck = id=> {
+    _.decks[id].terms.forEach(o=>{
+      var {term, definition} = o
+      o.definition = term
+      o.term = definition
+    })
+  }
+
   _.removeSelected = id=> {
     var {setId, rank} = _.selected[id]
     if(_.decks[setId]) {
@@ -141,6 +149,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   _.create = (title)=> {
     _.url = null
     _.creating = true
+    var data = lo.map(_.selected, (v,k)=> lo.pick(v, ['term', 'definition', 'image']))
     $http({
       method: 'POST',
       url: `${_.api}/create-set`,
@@ -148,7 +157,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
         title: title,
         lang_terms: 'en',
         lang_definitions: 'en',
-        data: lo.map(_.selected, (v,k)=> lo.pick(v, ['term', 'definition', 'image']))
+        data
       })
     }).then(res=>{
       _.url = `https://quizlet.com${res.data.url}`
@@ -165,6 +174,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       _.creating=false
       _.selected_actions = 'home'
       $mdToast.showSimple("Unable to create deck")
+      $analytics.eventTrack("Create Failed", {category: 'Create', label: lo.map(_.selected, (v,k)=> lo.pick(v, ['image']))})
     })
   }
   _.import = (importUrl) => {
@@ -215,20 +225,25 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       $mdToast.showSimple("Unable to get terms - try another query")
     })
   }
-  _.getTerms = (replace=true, replaceBloom=true)=> {
+  _.performSearch = ()=> _.getTerms({restartIndex:true, replaceTerms: true, replaceBloom: true})
+  _.loadNext = ()=> _.getTerms({restartIndex:false, replaceTerms: true, replaceBloom: false})
+  _.loadPrevious = ()=> {
+    _.startIndexes[_.search]  = _.startIndexes[_.search] - 20
+    _.getTerms({restartIndex:false, replaceTerms: true, replaceBloom: true})
+  }
+  _.getTerms = ({restartIndex=true, replaceTerms=true, replaceBloom=true})=> {
     _.losefocus = true
-    var startIndex = 0;
     _.fetching = true
-    _.decks = !!replace ? {} : (_.decks || {})
-    _.bloom = !!replaceBloom ? new BloomFilter(3e5, 3e-5) : (_.bloom || new BloomFilter(3e5, 3e-5))
+    _.decks = replaceTerms ? {} : (_.decks || {})
+    _.bloom = replaceBloom ? new BloomFilter(3e5, 3e-5) : (_.bloom || new BloomFilter(3e5, 3e-5))
     var term = _.search.trim()
+    $analytics.eventTrack((restartIndex ? "Load more": "Search"), {category: 'Fetch', label: term})
     if(term.length > 2){
       _.searched = term
-      _.getSetsforTerm(term.trim()).then(res=> {
-        _.startIndexes[term] = _.startIndexes[term] || 0
-        startIndex = _.startIndexes[term]
+      _.getSetsforTerm(term).then(res=> {
+        var startIndex =_.startIndexes[term] = restartIndex ? 0 : (_.startIndexes[term] || 0)
         getSets(res.data.sets.slice(startIndex,startIndex+10))
-        _.startIndexes[term] = _.startIndexes[term] + 10
+        _.startIndexes[term] += 10
       })
       .catch(()=>{
         _.fetching = false

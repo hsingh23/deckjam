@@ -1,0 +1,10 @@
+Easy
+ ✔ flip terms in decks @started(16-12-16 17:03) @done (16-12-16 17:13)
+ @lasted(0:10)
+ ✔ fix search to start form begining @started(16-12-16 17:14) @done (16-12-16 17:41)
+ @lasted(0:27) 
+ ✔ load previous (bloom filters mess things up) @started @done (16-12-16 18:31)
+Medium
+ ☐ decks and selected - button on the same page
+Hard
+ ☐ card view
