@@ -54,7 +54,8 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     }
   }
 })
-.controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", (_, $http, $mdToast, $mdMedia, $analytics)=> {
+.controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll)=> {
+  _.goTo = id=> $anchorScroll(id)
   _.api = 'http://ayudh.org:3337'
   _.losefocus = false
   // _.api = 'http://localhost:3337'

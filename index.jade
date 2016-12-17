@@ -26,82 +26,82 @@ html(lang='en')
           //- md-button(ng-click="performSearch()" md-truncate analytics-on="click" analytics-event="Search") add
           //- md-button.md-icon-button(ng-click="help=!help" ng-init="help=true")
           //-   md-icon.material-icons help
-      md-tabs.md-primary(md-stretch-tabs="auto" md-selected='data.selectedIndex')
-        md-tab#decks(aria-controls='decks-content' analytics-on="click" analytics-event="DecksTab") Decks
-        md-tab#selected(aria-controls='selected-content' analytics-on="click" analytics-event="SelectedTab") 
-          strong {{numSelected()}} Selected
+      #tabs(layout)
+        md-button.md-primary.md-raised(ng-click="goTo('decks')" analytics-on="click" analytics-event="DecksTab" flex) Search Results
+        md-button.md-raised(ng-click="goTo('selected')" analytics-on="click" analytics-event="SelectedTab" flex) Your Selections ({{numSelected()}})
+      //- md-tabs.md-primary(md-stretch-tabs="auto" md-selected='data.selectedIndex')
+      //-   md-tab#decks(aria-controls='decks-content' analytics-on="click" analytics-event="DecksTab") Decks
+      //-   md-tab#selected(aria-controls='selected-content' analytics-on="click" analytics-event="SelectedTab") 
+      //-     strong {{numSelected()}} Selected
     md-content(flex)
-      ui-view(layout='column' layout-fill='')
-        .inset(hide-sm='')
-        ng-switch.tabpanel-container(on='data.selectedIndex')
-          #decks-content(role='tabpanel' aria-labelledby='decks' ng-switch-when='0')
-            div(layout="column" layout-align="center center" layout-gt-sm="row" layout-align-gt-sm="center")
-              md-card(ng-show="help" ng-init="help=true" flex style="max-width:600px")
-                md-card-content
-                  h2 Welcome to Deckjam
-                  h3 Deckjam is a flash card curation tool. 
-                  p It is for students, teachers, and life long learners. Flashcards are proven to improve recognition and recall, yet creating flashcards is tedious. With deckjam you pick flashcards from many flashcards set to make your own flashcard set. Finally, export to quizlet.com where you can play games and test yourself on your carefully chosen set.
-                  h3(ng-show="numDecks()==0") Find flashcards for any subject by searching above.
-                  h3(ng-show="numDecks()!=0") Now click or drag over cards to select them for you deck
-                  h3(ng-show="numSelected()>0") When you are ready - click the SELECTED tab
-                    md-button(ng-click='data.selectedIndex=1')
-                      md-tooltip The selected tab is in the top blue navbar
-                      | Selected
-              md-card(ng-show="helpAdditional && numDecks()==0" ng-init="helpAdditional=true" flex style="max-width:500px")
-                md-card-content
-                  h3 FAQ
-                  strong Why Deckjam?
-                  p With deckjam, you can find flashcards that match your expression style. Each search provides relevant results allowing you to quickly build concise learning materials to prepare for tests and also engage in lifelong learning. Since cards are stored on quizlet, you can easily access them anywhere with rich mobile friendly apps and interactive games.
-                  strong Why is it called deckjam?
-                  p This app lets you pack together your favorite flashcards. It allows for improvised creation and curation of study material. Since the end product is a flashcard deck, deckjam just made sense.
-            //- md-card(flex)
-            //-   md-card-content
-            //-     strong {{numSelected()}} cards selected
-            md-card
-              md-card-content
-                h3 Found {{numDecks()}} Quizlet decks containing {{searched}}
-            #deck_results(ng-mousedown='md = true' ng-mouseup='md = false' ng-mouseleave='md = false')
-              md-card.noselect(ng-repeat='(id, set) in decks track by id' md-whiteframe="3")
-                md-card-title
-                  md-card-title-text
-                    span.md-headline {{set.title}}
-                      md-card-icon-actions
-                        md-button.md-icon-button(ng-click='swapDeck(id)')
-                          md-tooltip Swap term and definition
-                          md-icon.material-icons swap_horiz
-                        md-button.md-icon-button(ng-click='selectAll(id)')
-                          md-tooltip Select All
-                          md-icon.material-icons playlist_add_check
-                        md-button.md-icon-button(ng-click='removeDeck(id)')
-                          md-tooltip Remove Deck
-                          md-icon.material-icons close
-                md-card-content(style="margin-top:-15px")
-                  table.table
-                    thead
-                      tr
-                        th
-                        th Terms
-                        th Definitions
-                    tbody
-                      tr(ng-class='{success: term.selected}' ng-repeat='(id2, term) in set.terms track by id2' ng-mouseover='selectDragTerm(term, id, md)' ng-mousedown='selectDragTerm(term, id)')
-                        td
-                          md-button.md-icon-button(ng-click='selectClickTerm(term, id)' md-no-ink="true")
-                            md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
-                        td {{term.term}}
-                        td
-                          img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}' style="max-width: 100%")
-                          br(ng-if='term.image.url')
-                          | {{term.definition}}
-            md-card
-              md-card-content
-                md-button.md-primary.md-raised(ng-show="search && startIndexes[search]>19" ng-click="loadPrevious()") Load Previous
-                md-button.md-primary.md-raised(ng-click="search && loadNext()") Load next
-          #selected-content(role='tabpanel', aria-labelledby='selected', ng-switch-when='1')
+      #help
+        div(layout="column" layout-align="center center" layout-gt-sm="row" layout-align-gt-sm="center")
+          md-card(ng-show="help" ng-init="help=true" flex style="max-width:600px")
+            md-card-content
+              h2 Welcome to Deckjam
+              h3 Deckjam is a flash card curation tool. 
+              p It is for students, teachers, and life long learners. Flashcards are proven to improve recognition and recall, yet creating flashcards is tedious. With deckjam you pick flashcards from many flashcards set to make your own flashcard set. Finally, export to quizlet.com where you can play games and test yourself on your carefully chosen set.
+              h3(ng-show="numDecks()==0") Find flashcards for any subject by searching above.
+              h3(ng-show="numDecks()!=0") Now click or drag over cards to select them for you deck
+              h3(ng-show="numSelected()>0") When you are ready - click the SELECTED tab
+                md-button(ng-click='data.selectedIndex=1')
+                  md-tooltip The selected tab is in the top blue navbar
+                  | Selected
+          md-card(ng-show="helpAdditional && numDecks()==0" ng-init="helpAdditional=true" flex style="max-width:500px")
+            md-card-content
+              h3 FAQ
+              strong Why Deckjam?
+              p With deckjam, you can find flashcards that match your expression style. Each search provides relevant results allowing you to quickly build concise learning materials to prepare for tests and also engage in lifelong learning. Since cards are stored on quizlet, you can easily access them anywhere with rich mobile friendly apps and interactive games.
+              strong Why is it called deckjam?
+              p This app lets you pack together your favorite flashcards. It allows for improvised creation and curation of study material. Since the end product is a flashcard deck, deckjam just made sense.
+        //- md-card(flex)
+        //-   md-card-content
+        //-     strong {{numSelected()}} cards selected
+      md-card
+        md-card-content
+          h3 Found {{numDecks()}} Quizlet decks containing {{searched}}
+      #decks(ng-mousedown='md = true' ng-mouseup='md = false' ng-mouseleave='md = false')
+        md-card.noselect(ng-repeat='(id, set) in decks track by id' md-whiteframe="3")
+          md-card-title
+            md-card-title-text
+              span.md-headline {{set.title}}
+                md-card-icon-actions
+                  md-button.md-icon-button(ng-click='swapDeck(id)')
+                    md-tooltip Swap term and definition
+                    md-icon.material-icons swap_horiz
+                  md-button.md-icon-button(ng-click='selectAll(id)')
+                    md-tooltip Select All
+                    md-icon.material-icons playlist_add_check
+                  md-button.md-icon-button(ng-click='removeDeck(id)')
+                    md-tooltip Remove Deck
+                    md-icon.material-icons close
+          md-card-content(style="margin-top:-15px")
+            table.table
+              thead
+                tr
+                  th
+                  th Terms
+                  th Definitions
+              tbody
+                tr(ng-class='{success: term.selected}' ng-repeat='(id2, term) in set.terms track by id2' ng-mouseover='selectDragTerm(term, id, md)' ng-mousedown='selectDragTerm(term, id)')
+                  td
+                    md-button.md-icon-button(ng-click='selectClickTerm(term, id)' md-no-ink="true")
+                      md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
+                  td {{term.term}}
+                  td
+                    img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}' style="max-width: 100%")
+                    br(ng-if='term.image.url')
+                    | {{term.definition}}
+      md-card#nav
+        md-card-content
+          md-button.md-primary.md-raised(ng-show="search && startIndexes[search]>19" ng-click="loadPrevious()") Load Previous
+          md-button.md-primary.md-raised(ng-click="search && loadNext()") Load next
+      #selected
             .cards(layout-gt-sm)
               md-card(ng-show="helpSelected" ng-init="helpSelected=true")
                 md-card-content
-                  h3 Your curated cards
-                  p Your cards are saved between searches and browser reloads. You can easily import an quizlet set using the import button. Clicking editable allows you to edit flashcards. Once you are ready, create a deck by giving it a name. When your deck is ready, a button will take you to the quizlet deck. Then you can clone the deck into your account to customize it further on quizlet.com.
+                  h1 Your Selections
+                  p Your cards are saved between searches and browser reloads. You can easily import a quizlet set using the import button. Clicking editable allows you to edit flashcards. Once you are ready, create a deck by giving it a name. When your deck is ready, a button will take you to the quizlet deck. You can study, test, and play games with the deck on quizlet for free. If you want to see the set on the quizlet app on the phone, you can clone the deck from your account to customize it further on quizlet.com.
               md-card(ng-if="createdOne")
                 md-card-content
                   h3 Feedback and Support
@@ -150,7 +150,7 @@ html(lang='en')
                       th Terms
                       th Definitions
                   tbody
-                    tr(ng-repeat='card in selectedArray() track by id | orderBy:selectedOrder:reverse')
+                    tr(ng-repeat='card in selectedArray()| orderBy:selectedOrder:reverse')
                       td(layout="column")
                         md-button.md-icon-button(ng-click='removeSelected(card.id)')
                           md-tooltip Remove
