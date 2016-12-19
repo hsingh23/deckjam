@@ -5,6 +5,6 @@ Easy
  @lasted(0:27) 
  ✔ load previous (bloom filters mess things up) @started @done (16-12-16 18:31)
 Medium
- ☐ decks and selected - button on the same page
+ ✔ decks and selected - button on the same page @done (16-12-17 18:46)
 Hard
  ☐ card view

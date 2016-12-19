@@ -42,11 +42,9 @@ html(lang='en')
               h3 Deckjam is a flash card curation tool. 
               p It is for students, teachers, and life long learners. Flashcards are proven to improve recognition and recall, yet creating flashcards is tedious. With deckjam you pick flashcards from many flashcards set to make your own flashcard set. Finally, export to quizlet.com where you can play games and test yourself on your carefully chosen set.
               h3(ng-show="numDecks()==0") Find flashcards for any subject by searching above.
-              h3(ng-show="numDecks()!=0") Now click or drag over cards to select them for you deck
-              h3(ng-show="numSelected()>0") When you are ready - click the SELECTED tab
-                md-button(ng-click='data.selectedIndex=1')
-                  md-tooltip The selected tab is in the top blue navbar
-                  | Selected
+              h3(ng-show="numDecks()!=0") 
+              | Now click or drag over cards to select them for you deck
+              | When you are ready - click the SELECTED tab
           md-card(ng-show="helpAdditional && numDecks()==0" ng-init="helpAdditional=true" flex style="max-width:500px")
             md-card-content
               h3 FAQ
@@ -57,10 +55,10 @@ html(lang='en')
         //- md-card(flex)
         //-   md-card-content
         //-     strong {{numSelected()}} cards selected
-      md-card
+      md-card#tip
         md-card-content
           h3 Found {{numDecks()}} Quizlet decks containing {{searched}}
-      #decks(ng-mousedown='md = true' ng-mouseup='md = false' ng-mouseleave='md = false')
+      #decks
         md-card.noselect(ng-repeat='(id, set) in decks track by id' md-whiteframe="3")
           md-card-title
             md-card-title-text
@@ -75,23 +73,35 @@ html(lang='en')
                   md-button.md-icon-button(ng-click='removeDeck(id)')
                     md-tooltip Remove Deck
                     md-icon.material-icons close
-          md-card-content(style="margin-top:-15px")
-            table.table
-              thead
-                tr
-                  th
-                  th Terms
-                  th Definitions
-              tbody
-                tr(ng-class='{success: term.selected}' ng-repeat='(id2, term) in set.terms track by id2' ng-mouseover='selectDragTerm(term, id, md)' ng-mousedown='selectDragTerm(term, id)')
-                  td
-                    md-button.md-icon-button(ng-click='selectClickTerm(term, id)' md-no-ink="true")
+          div(layout layout-wrap style="margin: 1em;")
+            div(ng-class='{success: term.selected}' md-whiteframe="{{term.selected ? 3: 1}}" ng-click='selectClickTerm(term, id)' style="margin: 5px;min-width: 400px;" flex ng-repeat='(id2, term) in set.terms track by id2')
+              md-card-title
+                md-card-title-text
+                  span
+                    md-button.md-icon-button(md-no-ink="true")
                       md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
-                  td {{term.term}}
-                  td
-                    img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}' style="max-width: 100%")
-                    br(ng-if='term.image.url')
-                    | {{term.definition}}
+                    | {{term.term}}
+                  span.md-subhead {{term.definition}}
+                img.md-media-lg.card-media(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}' style="max-width: 100%")
+              //- md-card-actions(layout='row', layout-align='end center')
+              //-   md-button Action 1
+              //-   md-button Action 2
+            //- table.table
+            //-   thead
+            //-     tr
+            //-       th
+            //-       th Terms
+            //-       th Definitions
+            //-   tbody
+            //-     tr(ng-class='{success: term.selected}' ng-repeat='(id2, term) in set.terms track by id2' ng-mouseover='selectDragTerm(term, id, md)' ng-mousedown='selectDragTerm(term, id)')
+            //-       td
+            //-         md-button.md-icon-button(ng-click='selectClickTerm(term, id)' md-no-ink="true")
+            //-           md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
+            //-       td {{term.term}}
+            //-       td
+            //-         img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}' style="max-width: 100%")
+            //-         br(ng-if='term.image.url')
+            //-         | {{term.definition}}
       md-card#nav
         md-card-content
           md-button.md-primary.md-raised(ng-show="search && startIndexes[search]>19" ng-click="loadPrevious()") Load Previous
