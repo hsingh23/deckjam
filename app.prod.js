@@ -49,6 +49,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   };
   _.api = 'http://ayudh.org:3337';
   _.losefocus = false;
+  _.draggable = false;
   // _.api = 'http://localhost:3337'
   _.createdOne = localStorage.createdOne && parseInt(localStorage.createdOne) || 0;
   _.fetching = false;
@@ -89,10 +90,10 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   }
   _.selectClickTerm = function (term, setId) {
     // checkbox check for tablet and below
-    if (!$mdMedia('gt-md')) {
-      term.selected = !term.selected;
-      selectTerm(term, setId);
-    }
+    // if(!$mdMedia('gt-md')) {
+    term.selected = !term.selected;
+    selectTerm(term, setId);
+    // }
   };
   _.selectDragTerm = function (term, setId) {
     var mouseDown = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
