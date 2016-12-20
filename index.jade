@@ -55,9 +55,9 @@ html(lang='en')
         //- md-card(flex)
         //-   md-card-content
         //-     strong {{numSelected()}} cards selected
-      md-card#tip
-        md-card-content
-          h3 Found {{numDecks()}} Quizlet decks containing {{searched}}
+        md-card#tip
+          md-card-content
+            h3 Found {{numDecks()}} Quizlet decks containing {{searched}}
       #decks
         md-card.noselect(ng-repeat='(id, set) in decks track by id' md-whiteframe="3")
           md-card-title
@@ -73,16 +73,14 @@ html(lang='en')
                   md-button.md-icon-button(ng-click='removeDeck(id)')
                     md-tooltip Remove Deck
                     md-icon.material-icons close
-          div(layout layout-wrap style="margin: 1em;")
-            div(ng-class='{success: term.selected}' md-whiteframe="{{term.selected ? 3: 1}}" ng-click='selectClickTerm(term, id)' style="margin: 5px;min-width: 400px;" flex ng-repeat='(id2, term) in set.terms track by id2')
-              md-card-title
-                md-card-title-text
-                  span
-                    md-button.md-icon-button(md-no-ink="true")
-                      md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
-                    | {{term.term}}
-                  span.md-subhead {{term.definition}}
-                img.md-media-lg.card-media(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}' style="max-width: 100%")
+          div(layout layout-wrap style="margin: 1em;" )
+            div.deckcard(layout="column" ng-class='{success: term.selected}' md-whiteframe="{{term.selected ? 3: 1}}" ng-click='selectClickTerm(term, id)' flex ng-repeat='(id2, term) in set.terms track by id2')
+              span
+                md-button.md-icon-button(md-no-ink="true")
+                  md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
+                | {{term.term}}
+              span.md-subhead {{term.definition}}
+              img(width="{{term.image.width}}" height="{{term.image.height}}" ng-if='term.image' draggable="false" ng-src='{{term.image.url}}')
               //- md-card-actions(layout='row', layout-align='end center')
               //-   md-button Action 1
               //-   md-button Action 2
@@ -99,85 +97,84 @@ html(lang='en')
             //-           md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
             //-       td {{term.term}}
             //-       td
-            //-         img(ng-if='term.image' draggable="false" ng-src='{{term.image.url}}' style="max-width: 100%")
+            //-         img(width="{{term.image.width}}" height="{{term.image.height}}" ng-if='term.image' draggable="false" ng-src='{{term.image.url}}' style="max-width: 100%")
             //-         br(ng-if='term.image.url')
             //-         | {{term.definition}}
       md-card#nav
         md-card-content
           md-button.md-primary.md-raised(ng-show="search && startIndexes[search]>19" ng-click="loadPrevious()") Load Previous
           md-button.md-primary.md-raised(ng-click="search && loadNext()") Load next
-      #selected
-            .cards(layout-gt-sm)
-              md-card(ng-show="helpSelected" ng-init="helpSelected=true")
-                md-card-content
-                  h1 Your Selections
-                  p Your cards are saved between searches and browser reloads. You can easily import a quizlet set using the import button. Clicking editable allows you to edit flashcards. Once you are ready, create a deck by giving it a name. When your deck is ready, a button will take you to the quizlet deck. You can study, test, and play games with the deck on quizlet for free. If you want to see the set on the quizlet app on the phone, you can clone the deck from your account to customize it further on quizlet.com.
-              md-card(ng-if="createdOne")
-                md-card-content
-                  h3 Feedback and Support
-                  p Thanks for checking out my app. I speant a lot of time making this website robust and beautiful. If you have any ideas on how to make the website better, please feel free to email them to me at hsingh23 @ illinois.edu with the subject Deckjam. 
-                  a(href="https://www.paypal.me/hisingh1") Please donate. 
-                  p And keep learning ;)
-            md-card(md-whiteframe="3")
-              md-card-actions(layout='row' layout-align="center center" ng-show="selected_actions=='home'" ng-init="selected_actions='home'")
-                md-card-icon-actions
-                  md-button.md-primary.md-raised(ng-click="selected_actions='create'" analytics-on="click" analytics-event="Create") Create
-                  md-button(ng-click="selected_actions='import'" analytics-on="click" analytics-event="Import")
-                    icon-text(tip="Import" icon="import_export")
-                  md-switch(ng-model="selected_edit" ng-init="selected_edit = false" analytics-on="click" analytics-event="Editable") Editable
-                md-input-container(layout='row' hide-xs)
-                  label Sort By
-                  md-select(ng-model="selectedOrder" placeholder="Sort by")
-                    md-option(value="time") time
-                    md-option(value="term") term
-                md-button(ng-click="reverse=!reverse" hide-xs) Flip
-                md-button(ng-click='clearSelected()')
-                  icon-text(tip="Clear Selected" icon="clear_all" style="color: red")
-              md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='create'")
-                md-progress-linear(md-mode="indeterminate" ng-show="creating")
-                md-button.md-raised(class='md-icon-button' ng-click="selected_actions='home'")
-                  md-tooltip Back
-                  md-icon.material-icons chevron_left
-                form(ng-submit="create(title)" layout="row" layout-align="center center" flex)
-                  md-input-container.md-block(flex)
-                    label Deck name
-                    input(ng-model="title" type="text" autofocus required pattern=".{2,}" placeholder='My Deck')
-                md-button.md-primary(ng-click='create(title)' ng-class="{disabled: !!creating}" analytics-on="click" analytics-event="Creating") {{creating? "Creating..." : "Create"}}
-              md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='import'")
-                md-button.md-raised(class='md-icon-button' ng-click="selected_actions='home'")
-                  md-tooltip Back
-                  md-icon.material-icons chevron_left
-                md-input-container.md-block(flex)
-                  label Quizlet url or id
-                  input(ng-model="importUrl" autofocus required placeholder='https://quizlet.com/75846167/learning-flash-cards/')
-                md-button.md-primary(ng-click='import(importUrl)') Import
-              md-card-content(style="margin-top:-10px")
-                md-button.md-primary.md-raised(ng-show="url" ng-href="{{url}}" target="_blank" rel="noopener" analytics-on="click" analytics-event="CreatedDeck") Check out your deck!
-                table.table
-                  thead
-                    tr
-                      th
-                      th Terms
-                      th Definitions
-                  tbody
-                    tr(ng-repeat='card in selectedArray()| orderBy:selectedOrder:reverse')
-                      td(layout="column")
-                        md-button.md-icon-button(ng-click='removeSelected(card.id)')
-                          md-tooltip Remove
-                          md-icon.material-icons(style="color: red") delete
-                        md-button.md-icon-button(ng-click='swapSelected(card.id)')
-                          md-tooltip Swap term and definition
-                          md-icon.material-icons swap_horiz
-                      td
-                        md-input-container(style="width:100%" ng-if="selected_edit")
-                          textarea(aria-label="term" type="text" ng-model="card.term" ng-minlength="1" style="width:100%")
-                        span(ng-if="!selected_edit") {{card.term}}
-                      td
-                        img(ng-if='card.image' ng-src='{{card.image.url}}' style="max-width: 100%" draggable="false")
-                        br(ng-if='card.image')
-                        md-input-container(style="width:100%" ng-if="selected_edit")
-                          textarea(aria-label="definition" ng-model="card.definition" ng-minlength="1" style="width:100%")
-                        span(ng-if="!selected_edit") {{card.definition}}
+      .cards#selected(layout-gt-sm)
+        md-card(ng-show="helpSelected" ng-init="helpSelected=true")
+          md-card-content
+            h1 Your Selections
+            p Your cards are saved between searches and browser reloads. You can easily import a quizlet set using the import button. Clicking editable allows you to edit flashcards. Once you are ready, create a deck by giving it a name. When your deck is ready, a button will take you to the quizlet deck. You can study, test, and play games with the deck on quizlet for free. If you want to see the set on the quizlet app on the phone, you can clone the deck from your account to customize it further on quizlet.com.
+        md-card(ng-if="createdOne")
+          md-card-content
+            h3 Feedback and Support
+            p Thanks for checking out my app. I speant a lot of time making this website robust and beautiful. If you have any ideas on how to make the website better, please feel free to email them to me at hsingh23 @ illinois.edu with the subject Deckjam. 
+            a(href="https://www.paypal.me/hisingh1") Please donate. 
+            p And keep learning ;)
+      md-card(md-whiteframe="3")
+        md-card-actions(layout='row' layout-align="center center" ng-show="selected_actions=='home'" ng-init="selected_actions='home'")
+          md-card-icon-actions
+            md-button.md-primary.md-raised(ng-click="selected_actions='create'" analytics-on="click" analytics-event="Create") Create
+            md-button(ng-click="selected_actions='import'" analytics-on="click" analytics-event="Import")
+              icon-text(tip="Import" icon="import_export")
+            md-switch(ng-model="selected_edit" ng-init="selected_edit = false" analytics-on="click" analytics-event="Editable") Editable
+          md-input-container(layout='row' hide-xs)
+            label Sort By
+            md-select(ng-model="selectedOrder" placeholder="Sort by")
+              md-option(value="time") time
+              md-option(value="term") term
+          md-button(ng-click="reverse=!reverse" hide-xs) Flip
+          md-button(ng-click='clearSelected()')
+            icon-text(tip="Clear Selected" icon="clear_all" style="color: red")
+        md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='create'")
+          md-progress-linear(md-mode="indeterminate" ng-show="creating")
+          md-button.md-raised(class='md-icon-button' ng-click="selected_actions='home'")
+            md-tooltip Back
+            md-icon.material-icons chevron_left
+          form(ng-submit="create(title)" layout="row" layout-align="center center" flex)
+            md-input-container.md-block(flex)
+              label Deck name
+              input(ng-model="title" type="text" autofocus required pattern=".{2,}" placeholder='My Deck')
+          md-button.md-primary(ng-click='create(title)' ng-class="{disabled: !!creating}" analytics-on="click" analytics-event="Creating") {{creating? "Creating..." : "Create"}}
+        md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='import'")
+          md-button.md-raised(class='md-icon-button' ng-click="selected_actions='home'")
+            md-tooltip Back
+            md-icon.material-icons chevron_left
+          md-input-container.md-block(flex)
+            label Quizlet url or id
+            input(ng-model="importUrl" autofocus required placeholder='https://quizlet.com/75846167/learning-flash-cards/')
+          md-button.md-primary(ng-click='import(importUrl)') Import
+        md-card-content(style="margin-top:-10px")
+          md-button.md-primary.md-raised(ng-show="url" ng-href="{{url}}" target="_blank" rel="noopener" analytics-on="click" analytics-event="CreatedDeck") Check out your deck!
+          table.table
+            thead
+              tr
+                th
+                th Terms
+                th Definitions
+            tbody
+              tr(ng-repeat='card in selectedArray()|orderBy:selectedOrder:reverse track by card.id')
+                td(layout="column")
+                  md-button.md-icon-button(ng-click='removeSelected(card.id)')
+                    md-tooltip Remove
+                    md-icon.material-icons(style="color: red") delete
+                  md-button.md-icon-button(ng-click='swapSelected(card.id)')
+                    md-tooltip Swap term and definition
+                    md-icon.material-icons swap_horiz
+                td
+                  md-input-container(style="width:100%" ng-if="selected_edit")
+                    textarea(aria-label="term" type="text" ng-model="card.term" ng-minlength="1" style="width:100%")
+                  span(ng-if="!selected_edit") {{card.term}}
+                td
+                  img(width="{{card.image.width}}" height="{{card.image.height}}" ng-if='card.image' ng-src='{{card.image.url}}' style="max-width: 100%" draggable="false")
+                  br(ng-if='card.image')
+                  md-input-container(style="width:100%" ng-if="selected_edit")
+                    textarea(aria-label="definition" ng-model="card.definition" ng-minlength="1" style="width:100%")
+                  span(ng-if="!selected_edit") {{card.definition}}
 
     script(src='bloomfilter.js')
     script(src='lodash.js')
