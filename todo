@@ -1,10 +1,17 @@
+
+
 Easy
- ✔ flip terms in decks @started(16-12-16 17:03) @done (16-12-16 17:13)
- @lasted(0:10)
- ✔ fix search to start form begining @started(16-12-16 17:14) @done (16-12-16 17:41)
- @lasted(0:27) 
- ✔ load previous (bloom filters mess things up) @started @done (16-12-16 18:31)
+ ☐ Hook up query params to quizlet
+ ✔ Allude more to Quizlet ('Deck Name:' prefix, languages, date created, creator, see on quizlet) @started(16-12-22 14:12) @done (16-12-22 16:59) @lasted(2:47)
+ ✔ make help more visible with toast and h1s @started(16-12-22 13:54) @done (16-12-22 14:12) @lasted(0:18)
+ ✔ add created by deckjam card @done (16-12-22 16:59)
+ ☐ scroll to top and bottom
+ ✔ keep track of deck language @done (16-12-22 16:59)
+
 Medium
- ✔ decks and selected - button on the same page @done (16-12-17 18:46)
+ ☐ Autocomplete search from google or wikipedia
+ ☐ export to anki @started
+
 Hard
- ☐ card view
+ ☐ try service workers again
+ ☐ group by similar

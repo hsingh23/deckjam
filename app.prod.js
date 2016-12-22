@@ -44,9 +44,6 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     }
   };
 }).controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', function (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll) {
-  _.goTo = function (id) {
-    return $anchorScroll(id);
-  };
   _.api = 'http://ayudh.org:3337';
   _.losefocus = false;
   _.draggable = false;
@@ -75,6 +72,9 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     return lo.values(_.selected);
   };
   _.startIndexes = {};
+  if (_.numSelected() == 0 && _.numDecks() == 0) {
+    $mdToast.showSimple('Search: Try searching for flashcards above.');
+  }
   if (_.numSelected() > 0) {
     $mdToast.showSimple('You have ' + _.numSelected() + ' cards selected. Remember to clear them if you are making a new set.');
   }
@@ -143,6 +143,12 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     localStorage.selected = JSON.stringify(_.selected);
   };
   _.swapDeck = function (id) {
+    var _$decks$id = _.decks[id],
+        lang_terms = _$decks$id.lang_terms,
+        lang_definitions = _$decks$id.lang_definitions;
+
+    _.decks[id].lang_terms = lang_definitions;
+    _.decks[id].lang_definitions = lang_terms;
     _.decks[id].terms.forEach(function (o) {
       var term = o.term,
           definition = o.definition;
@@ -235,7 +241,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
           return t.rank = i;
         });
         if (terms.length > 2) {
-          _.decks[set.id] = lo.pick(set, ['url', 'title', 'modified_date', 'lang_terms', 'lang_definitions']);
+          _.decks[set.id] = lo.pick(set, ['url', 'title', 'creator', 'display_timestamp', 'lang_terms', 'lang_definitions']);
           _.decks[set.id].terms = terms;
           _.decks[set.id].terms_length = terms.length;
         }

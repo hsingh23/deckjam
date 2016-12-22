@@ -11,9 +11,8 @@ html(lang='en')
     link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic")
     link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
     link(rel='stylesheet', href='style.css')
-
   body(ng-app='deckjam' ng-controller='homeContainer' layout="column" layout-fill ng-cloak)
-    md-toolbar(class="md-hue-1" md-scroll-shrink='true')
+    md-toolbar(class="md-hue-1" md-scroll-shrink='false')
       .md-toolbar-tools
         h2( md-truncate ng-click="data.selectedIndex=0") Deckjam
         form(ng-submit="performSearch()" layout="row" layout-align="center center" flex)
@@ -36,15 +35,14 @@ html(lang='en')
     md-content(flex)
       #help
         div(layout="column" layout-align="center center" layout-gt-sm="row" layout-align-gt-sm="center")
-          md-card(ng-show="help" ng-init="help=true" flex style="max-width:600px")
-            md-card-content
+          md-card(ng-show="help" ng-init="help=true" flex)
+            md-card-content(style="max-width:700px; margin:0 auto;")
               h2 Welcome to Deckjam
               h3 Deckjam is a flash card curation tool. 
               p It is for students, teachers, and life long learners. Flashcards are proven to improve recognition and recall, yet creating flashcards is tedious. With deckjam you pick flashcards from many flashcards set to make your own flashcard set. Finally, export to quizlet.com where you can play games and test yourself on your carefully chosen set.
-              h3(ng-show="numDecks()==0") Find flashcards for any subject by searching above.
-              h3(ng-show="numDecks()!=0") 
-              | Now click or drag over cards to select them for you deck
-              | When you are ready - click the SELECTED tab
+              h2(ng-show="numDecks()==0") Search: Find flashcards for any subject by searching above.
+              h2(ng-show="numDecks() > 0 && numSelected() < 2") Select: Click cards to add them to your cards
+              h2(ng-show="numDecks() > 0 && numSelected() >= 2") Study: Click the SELECTIONS tab to export cards to quizlet
           md-card(ng-show="helpAdditional && numDecks()==0" ng-init="helpAdditional=true" flex style="max-width:500px")
             md-card-content
               h3 FAQ
@@ -59,10 +57,20 @@ html(lang='en')
           md-card-content
             h3 Found {{numDecks()}} Quizlet decks containing {{searched}}
       #decks
-        md-card.noselect(ng-repeat='(id, set) in decks track by id' md-whiteframe="3")
+        md-card(ng-repeat='(id, set) in decks track by id' md-whiteframe="3")
           md-card-title
             md-card-title-text
-              span.md-headline {{set.title}}
+              .md-headline
+                a(ng-href="https://quizlet.com/{{set.creator.username}}" target="_blank" rel="noopener" analytics-on="click" analytics-event="User Profile")
+                  md-tooltip {{set.creator.username}}
+                  img.avatar(ng-src="{{set.creator.profile_image}}")
+                md-button(ng-href="https://quizlet.com{{set.url}}" target="_blank" rel="noopener" analytics-on="click" analytics-event="User Deck") {{set.title}} 
+                span.md-button.md-icon-button(hide-xs show-gt-sm)
+                  md-tooltip Languages: {{set.lang_terms}} -> {{set.lang_definitions}}
+                  md-icon.material-icons language
+                span.md-button.md-icon-button(hide-xs show-gt-sm)
+                  md-tooltip Created {{set.display_timestamp}}
+                  md-icon.material-icons access_time
                 md-card-icon-actions
                   md-button.md-icon-button(ng-click='swapDeck(id)')
                     md-tooltip Swap term and definition
@@ -79,7 +87,7 @@ html(lang='en')
                 md-button.md-icon-button(md-no-ink="true")
                   md-icon.material-icons {{term.selected ? "check_box" : "check_box_outline_blank"}}
                 | {{term.term}}
-              span.md-subhead {{term.definition}}
+              span.definition.md-subhead {{term.definition}}
               img(width="{{term.image.width}}" height="{{term.image.height}}" ng-if='term.image' draggable="false" ng-src='{{term.image.url}}')
               //- md-card-actions(layout='row', layout-align='end center')
               //-   md-button Action 1
@@ -103,7 +111,7 @@ html(lang='en')
       md-card#nav
         md-card-content
           md-button.md-primary.md-raised(ng-show="search && startIndexes[search]>19" ng-click="loadPrevious()") Load Previous
-          md-button.md-primary.md-raised(ng-click="search && loadNext()") Load next
+          md-button.md-primary.md-raised(ng-show="search" ng-click="search && loadNext()") Load next
       .cards#selected(layout-gt-sm)
         md-card(ng-show="helpSelected" ng-init="helpSelected=true")
           md-card-content
