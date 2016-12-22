@@ -4,6 +4,11 @@
 .success {
   background-color: #dff0d8;
 }
+.avatar{
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+}
 #tabs {
   background-color: rgba(113, 112, 131, 0.57);
 }
@@ -35,9 +40,16 @@ html{
   margin: 5px;
   padding: 14px;
 }
+.deckcard:focus {
+  outline: 0;
+}
 .deckcard img {
   max-width: 100%;
   margin: auto;
+  padding: 3px;
+}
+.definition{
+  white-space: pre-wrap;
 }
 @media (max-width: 450px) {
   .deckcard{
