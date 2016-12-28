@@ -7,11 +7,29 @@ Easy
  ✔ add created by deckjam card @done (16-12-22 16:59)
  ☐ scroll to top and bottom
  ✔ keep track of deck language @done (16-12-22 16:59)
+ ☐ export to anki UI
+ ☐ export tsv download
 
 Medium
  ☐ Autocomplete search from google or wikipedia
- ☐ export to anki @started
+ ✔ export to anki plugin @started @done (16-12-25 21:48)
 
 Hard
  ☐ try service workers again
  ☐ group by similar
+
+anki doc
+
+ Anki is a special flashcard software that lets you decide how well you learned a flashcard. If you learned it well, it will show you the card far in the future. If you struggled to recollect it will show you the card sooner. Anki is really good at showing you cards when you are about to forget them allowing you to study less. 
+Learn more here http://ankisrs.net/docs/manual.html#introduction
+
+First time process
+1. Install Anki http://ankisrs.net/#download
+2. Install Quizlet importer plugin https://ankiweb.net/shared/info/714480480
+
+Now import your quizlet deck (url)
+http://g.recordit.co/QxVfWk322A.gif
+1. Open quizlet importer (anki menu > tools > import your quizlet deck)
+2. Paste into the Quizlet Deck url field and hit Import set.
+3. Study!
+https://ankiweb.net/shared/info/714480480

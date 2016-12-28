@@ -45,6 +45,9 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   };
 }).controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', function (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll) {
   _.api = 'http://ayudh.org:3337';
+  _.goTo = function (id) {
+    return $anchorScroll(id);
+  };
   _.losefocus = false;
   _.draggable = false;
   // _.api = 'http://localhost:3337'
