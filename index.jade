@@ -2,6 +2,7 @@ doctype html
 html(lang='en')
   head
     title Deckjam
+    base(href='/')
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='apple-mobile-web-app-capable', content='yes')
@@ -12,13 +13,15 @@ html(lang='en')
     link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
     link(rel='stylesheet', href='style.css')
   body(ng-app='deckjam' ng-controller='homeContainer' layout="column" layout-fill ng-cloak)
+    md-button.md-fab.md-fab-bottom-right(ng-click="selected_actions='create'; goTo('create')" ng-show='numSelected() >= 2')
+      md-icon.material-icons save
     md-toolbar(class="md-hue-1" md-scroll-shrink='false')
       .md-toolbar-tools
         h2( md-truncate ng-click="data.selectedIndex=0") Deckjam
         form(ng-submit="performSearch()" layout="row" layout-align="center center" flex)
           md-progress-linear(md-mode="indeterminate" ng-show="fetching")
           md-input-container.md-block(md-no-float flex)
-            input(ng-model="search" type="search" placeholder="Flashcards for: Chemistry" lose-focus="losefocus")
+            input#search(ng-model="search" type="search" placeholder="Flashcards for: Chemistry" lose-focus="losefocus")
         md-button.md-primary(ng-click="performSearch()" md-truncate)
           md-tooltip Search
           md-icon.material-icons search
@@ -26,7 +29,7 @@ html(lang='en')
           //- md-button.md-icon-button(ng-click="help=!help" ng-init="help=true")
           //-   md-icon.material-icons help
       #tabs(layout)
-        md-button.md-primary.md-raised(ng-click="goTo('decks')" analytics-on="click" analytics-event="DecksTab" flex) Search Results
+        md-button.md-primary.md-raised(ng-click="goTo('help')" analytics-on="click" analytics-event="DecksTab" flex) Search Results
         md-button.md-raised(ng-click="goTo('selected')" analytics-on="click" analytics-event="SelectedTab" flex) Your Selections ({{numSelected()}})
       //- md-tabs.md-primary(md-stretch-tabs="auto" md-selected='data.selectedIndex')
       //-   md-tab#decks(aria-controls='decks-content' analytics-on="click" analytics-event="DecksTab") Decks
@@ -75,7 +78,7 @@ html(lang='en')
                   md-button.md-icon-button(ng-click='swapDeck(id)')
                     md-tooltip Swap term and definition
                     md-icon.material-icons swap_horiz
-                  md-button.md-icon-button(ng-click='selectAll(id)')
+                  md-button.md-icon-button(hide-xs hide-sm ng-click='selectAll(id)')
                     md-tooltip Select All
                     md-icon.material-icons playlist_add_check
                   md-button.md-icon-button(ng-click='removeDeck(id)')
@@ -108,10 +111,10 @@ html(lang='en')
             //-         img(width="{{term.image.width}}" height="{{term.image.height}}" ng-if='term.image' draggable="false" ng-src='{{term.image.url}}' style="max-width: 100%")
             //-         br(ng-if='term.image.url')
             //-         | {{term.definition}}
-      md-card#nav
+      md-card#nav(ng-show="search")
         md-card-content
-          md-button.md-primary.md-raised(ng-show="search && startIndexes[search]>19" ng-click="loadPrevious()") Load Previous
-          md-button.md-primary.md-raised(ng-show="search" ng-click="search && loadNext()") Load next
+          md-button.md-primary.md-raised(ng-show="startIndexes[search]>19" ng-click="loadPrevious()") Load Previous
+          md-button.md-primary.md-raised(ng-click="loadNext()") Load next
       .cards#selected(layout-gt-sm)
         md-card(ng-show="helpSelected" ng-init="helpSelected=true")
           md-card-content
@@ -123,21 +126,23 @@ html(lang='en')
             p Thanks for checking out my app. I speant a lot of time making this website robust and beautiful. If you have any ideas on how to make the website better, please feel free to email them to me at hsingh23 @ illinois.edu with the subject Deckjam. 
             a(href="https://www.paypal.me/hisingh1") Please donate. 
             p And keep learning ;)
-      md-card(md-whiteframe="3")
+      md-card#create(md-whiteframe="3")
         md-card-actions(layout='row' layout-align="center center" ng-show="selected_actions=='home'" ng-init="selected_actions='home'")
           md-card-icon-actions
-            md-button.md-primary.md-raised(ng-click="selected_actions='create'" analytics-on="click" analytics-event="Create") Create
-            md-button(ng-click="selected_actions='import'" analytics-on="click" analytics-event="Import")
-              icon-text(tip="Import" icon="import_export")
             md-switch(ng-model="selected_edit" ng-init="selected_edit = false" analytics-on="click" analytics-event="Editable") Editable
+            md-button(ng-click="selected_actions='import'" analytics-on="click" analytics-event="Import")
+              md-tooltip Import existing quizlet deck into selected cards
+              md-icon.material-icons import_export
+          md-button(ng-click='clearSelected()')
+            icon-text(tip="Clear Selected" icon="clear_all" style="color: red")
           md-input-container(layout='row' hide-xs)
             label Sort By
             md-select(ng-model="selectedOrder" placeholder="Sort by")
               md-option(value="time") time
               md-option(value="term") term
           md-button(ng-click="reverse=!reverse" hide-xs) Flip
-          md-button(ng-click='clearSelected()')
-            icon-text(tip="Clear Selected" icon="clear_all" style="color: red")
+          md-button.md-primary.md-raised(ng-click="selected_actions='create'" analytics-on="click" analytics-event="Create") Save
+            md-tooltip Save selections to Quizlet
         md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='create'")
           md-progress-linear(md-mode="indeterminate" ng-show="creating")
           md-button.md-raised(class='md-icon-button' ng-click="selected_actions='home'")
@@ -183,6 +188,7 @@ html(lang='en')
                   md-input-container(style="width:100%" ng-if="selected_edit")
                     textarea(aria-label="definition" ng-model="card.definition" ng-minlength="1" style="width:100%")
                   span(ng-if="!selected_edit") {{card.definition}}
+
 
     script(src='bloomfilter.js')
     script(src='lodash.js')

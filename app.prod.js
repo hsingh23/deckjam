@@ -5,13 +5,14 @@ if (location.protocol != 'http:') {
   location.protocol = 'http:';
 }
 // if ('serviceWorker' in navigator) {
-//   navigator.serviceWorker.register('service-worker.js');
+//   navigator.serviceWorker.register('service-worker.js')
 // }
 // removed service workers and fetch because quizlet does not do cors http://stackoverflow.com/a/34940074 
 // no-cors mode won't send authorization header https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
 var lo = _;
 // var app = angular.module('deckjam', ['ngMaterial'])
-var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.google.analytics']).config(function ($mdThemingProvider) {
+var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.google.analytics']).config(function ($mdThemingProvider, $locationProvider) {
+  $locationProvider.html5Mode(true);
   var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
     'contrastDefaultColor': 'light',
     'contrastDarkColors': ['50'],
@@ -23,7 +24,14 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     'hue-1': '50'
   }).accentPalette('pink');
   $mdThemingProvider.theme('input', 'default').primaryPalette('grey');
-}).directive('iconText', function ($mdMedia) {
+}).directive('postRepeatDirective', ['$timeout', function ($timeout) {
+  return function (scope) {
+    if (scope.$first) window.a = new Date(); // window.a can be updated anywhere if to reset counter at some action if ng-repeat is not getting started from $first
+    if (scope.$last) $timeout(function () {
+      console.log("## DOM rendering list took: " + (new Date() - window.a) + " ms");
+    });
+  };
+}]).directive('iconText', function ($mdMedia) {
   return {
     restrict: 'E',
     scope: {
@@ -43,7 +51,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       });
     }
   };
-}).controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', function (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll) {
+}).controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', '$location', function (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location) {
   _.api = 'http://ayudh.org:3337';
   _.goTo = function (id) {
     return $anchorScroll(id);
@@ -283,6 +291,8 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     var term = _.search.trim();
     $analytics.eventTrack(restartIndex ? "Load more" : "Search", { category: 'Fetch', label: term });
     if (term.length > 2) {
+      $location.search('q', term);
+      $mdToast.showSimple('Searching quizlet for ' + term + ' cards: ~8 seconds');
       _.searched = term;
       _.getSetsforTerm(term).then(function (res) {
         var startIndex = _.startIndexes[term] = restartIndex ? 0 : _.startIndexes[term] || 0;
@@ -294,6 +304,10 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       });
     }
   };
+
+  // query params
+  _.search = $location.search()['q'];
+  _.search && _.performSearch();
 }]);
 
 //# sourceMappingURL=app.prod.js.map
