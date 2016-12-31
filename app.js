@@ -1,16 +1,17 @@
-"use babel";
+"use babel"
 if (location.protocol != 'http:') {
-  location.protocol = 'http:';
+  location.protocol = 'http:'
 }
 // if ('serviceWorker' in navigator) {
-//   navigator.serviceWorker.register('service-worker.js');
+//   navigator.serviceWorker.register('service-worker.js')
 // }
 // removed service workers and fetch because quizlet does not do cors http://stackoverflow.com/a/34940074 
 // no-cors mode won't send authorization header https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
-var lo = _;
+var lo = _
 // var app = angular.module('deckjam', ['ngMaterial'])
 var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.google.analytics'])
-.config(function($mdThemingProvider) {
+.config(function($mdThemingProvider, $locationProvider) {
+  $locationProvider.html5Mode(true)
   var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
     'contrastDefaultColor': 'light',
     'contrastDarkColors': ['50'],
@@ -26,6 +27,16 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   $mdThemingProvider.theme('input', 'default')
     .primaryPalette('grey')
 })
+.directive('postRepeatDirective', ['$timeout', function ($timeout) {
+  return function (scope) {
+    if (scope.$first)
+      window.a = new Date() // window.a can be updated anywhere if to reset counter at some action if ng-repeat is not getting started from $first
+    if (scope.$last)
+      $timeout(function () {
+        console.log("## DOM rendering list took: " + (new Date() - window.a) + " ms")
+      })
+  }
+}])
 .directive('iconText', function($mdMedia) {
   return {
     restrict: 'E',
@@ -54,7 +65,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     }
   }
 })
-.controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll)=> {
+.controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', '$location', (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location)=> {
   _.api = 'http://ayudh.org:3337'
   _.goTo = id=> $anchorScroll(id)
   _.losefocus = false
@@ -247,6 +258,8 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     var term = _.search.trim()
     $analytics.eventTrack((restartIndex ? "Load more": "Search"), {category: 'Fetch', label: term})
     if(term.length > 2){
+      $location.search('q', term)
+      $mdToast.showSimple(`Searching quizlet for ${term} cards: ~8 seconds`)
       _.searched = term
       _.getSetsforTerm(term).then(res=> {
         var startIndex =_.startIndexes[term] = restartIndex ? 0 : (_.startIndexes[term] || 0)
@@ -259,4 +272,8 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       })
     }
   }
+
+  // query params
+  _.search = $location.search()['q']
+  _.search && _.performSearch()
 }])

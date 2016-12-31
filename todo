@@ -1,11 +1,9 @@
-
-
 Easy
- ☐ Hook up query params to quizlet
+ ✔ Hook up query params to quizlet @started @done (12/31/2016, 1:57:41 PM)
  ✔ Allude more to Quizlet ('Deck Name:' prefix, languages, date created, creator, see on quizlet) @started(16-12-22 14:12) @done (16-12-22 16:59) @lasted(2:47)
  ✔ make help more visible with toast and h1s @started(16-12-22 13:54) @done (16-12-22 14:12) @lasted(0:18)
  ✔ add created by deckjam card @done (16-12-22 16:59)
- ☐ scroll to top and bottom
+ ☐ scroll to top and bottom @started
  ✔ keep track of deck language @done (16-12-22 16:59)
  ☐ export to anki UI
  ☐ export tsv download
