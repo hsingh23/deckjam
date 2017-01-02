@@ -51,10 +51,10 @@ html(lang='en')
             h4(ng-show="numDecks() > 0 && numSelected() < 2") Click cards to add them to your cards
             h4(ng-show="numDecks() > 0 && numSelected() >= 2") Click the Save icon to create your quizlet deck
             span(layout)
-              form(ng-submit="filter=filterInput; losefocus2=true" layout="row" layout-align="center center" flex)
+              form(ng-submit="filter=filterInput; blur()" layout="row" layout-align="center center" flex)
                 md-input-container.md-block(md-no-float flex)
-                  input(ng-model="filterInput" type="search" placeholder="Filter Decks" lose-focus="losefocus2" autocomplete="off")
-              md-button.md-primary(ng-click="filter=filterInput; losefocus2=true" md-truncate)
+                  input(ng-model="filterInput" type="search" placeholder="Filter Decks" autocomplete="off")
+              md-button.md-primary(ng-click="filter=filterInput; blur()" md-truncate)
                 md-tooltip Filter
                 md-icon.material-icons find_in_page
       #decks()
@@ -128,10 +128,11 @@ html(lang='en')
             md-button.md-raised(class='md-icon-button' ng-click="selected_actions='home'")
               md-tooltip Back
               md-icon.material-icons chevron_left
-            form(ng-submit="create(title)" layout="row" layout-align="center center" flex)
+            form(ng-submit="create(title); blur()" layout="row" layout-align="center center" flex)
               md-input-container.md-block(flex)
                 label Deck name
-                input(ng-model="title" type="text" autofocus required pattern=".{2,}" placeholder='My Deck')
+                md-progress-linear(md-mode="indeterminate" ng-show="creating")
+                input(ng-model="title" type="text" autofocus required pattern=".{2,}" placeholder='My Deck' ng-hide="creating")
             md-button.md-primary(ng-click='create(title)' ng-class="{disabled: !!creating}" analytics-on="click" analytics-event="Creating") {{creating? "Creating..." : "Create"}}
           md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='import'")
             md-button.md-raised(class='md-icon-button' ng-click="selected_actions='home'")
