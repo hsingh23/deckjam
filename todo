@@ -3,8 +3,10 @@ Easy
  ✔ Allude more to Quizlet ('Deck Name:' prefix, languages, date created, creator, see on quizlet) @started(16-12-22 14:12) @done (16-12-22 16:59) @lasted(2:47)
  ✔ make help more visible with toast and h1s @started(16-12-22 13:54) @done (16-12-22 14:12) @lasted(0:18)
  ✔ add created by deckjam card @done (16-12-22 16:59)
- ☐ scroll to top and bottom @started
+ ✔ scroll to top and bottom @started @done (1/1/2017, 8:56:34 PM)
  ✔ keep track of deck language @done (16-12-22 16:59)
+ ☐ move towards a google feel
+ ☐ play with filter as a subhead and search as fixed?
  ☐ export to anki UI
  ☐ export tsv download
 
@@ -14,7 +16,7 @@ Medium
 
 Hard
  ☐ try service workers again
- ☐ group by similar
+
 
 anki doc
 
@@ -31,3 +33,6 @@ http://g.recordit.co/QxVfWk322A.gif
 2. Paste into the Quizlet Deck url field and hit Import set.
 3. Study!
 https://ankiweb.net/shared/info/714480480
+
+
+Decided against group by similar - because filtering/searching is easier
