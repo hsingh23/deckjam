@@ -43,21 +43,23 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     },
     template: '<md-tooltip style="{{style}}" hide-gt-xs>\n      {{tip || text}}\n    </md-tooltip>\n    <md-icon hide-gt-xs class="material-icons" style="{{style}}">\n      {{icon}}\n    </md-icon>\n    <span style="{{style}}" hide-xs>{{text}}</span>'
   };
-}).filter("highlight", function () {
-  return function (text, search, caseSensitive) {
-    if (text && (search || angular.isNumber(search))) {
-      text = text.toString();
-      search = search.toString();
-      // if (caseSensitive) {
-      //   return text.split(search).join("<span class=\"ui-match\">" + search + "</span>")
-      // } else {
-      return text.replace(new RegExp(search, "gi"), "<span class=\"ui-match\">$&</span>");
-      // }
-    } else {
-      return text;
-    }
-  };
-}).directive('loseFocus', function () {
+})
+// .filter("highlight", function() {
+//   return function(text, search, caseSensitive) {
+//     if (text && (search || angular.isNumber(search))) {
+//       text = text.toString()
+//       search = search.toString()
+//       // if (caseSensitive) {
+//       //   return text.split(search).join("<span class=\"ui-match\">" + search + "</span>")
+//       // } else {
+//         return text.replace(new RegExp(search, "gi"), "<span class=\"ui-match\">$&</span>")
+//       // }
+//     } else {
+//       return text
+//     }
+//   }
+// })
+.directive('loseFocus', function () {
   return {
     link: function link(scope, element, attrs) {
       scope.$watch(attrs.loseFocus, function (value) {
@@ -67,7 +69,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       });
     }
   };
-}).controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', '$location', '$window', function (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location, $window) {
+}).controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', '$location', '$window', '$log', function (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location, $window, $log) {
   _.filter = '';
   _.matchCard = function (card) {
     var search = new RegExp(_.filter, 'i');

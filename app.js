@@ -56,21 +56,21 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     <span style="{{style}}" hide-xs>{{text}}</span>`
   }
 })
-.filter("highlight", function() {
-  return function(text, search, caseSensitive) {
-    if (text && (search || angular.isNumber(search))) {
-      text = text.toString()
-      search = search.toString()
-      // if (caseSensitive) {
-      //   return text.split(search).join("<span class=\"ui-match\">" + search + "</span>")
-      // } else {
-        return text.replace(new RegExp(search, "gi"), "<span class=\"ui-match\">$&</span>")
-      // }
-    } else {
-      return text
-    }
-  }
-})
+// .filter("highlight", function() {
+//   return function(text, search, caseSensitive) {
+//     if (text && (search || angular.isNumber(search))) {
+//       text = text.toString()
+//       search = search.toString()
+//       // if (caseSensitive) {
+//       //   return text.split(search).join("<span class=\"ui-match\">" + search + "</span>")
+//       // } else {
+//         return text.replace(new RegExp(search, "gi"), "<span class=\"ui-match\">$&</span>")
+//       // }
+//     } else {
+//       return text
+//     }
+//   }
+// })
 .directive('loseFocus', function() {
   return {
     link: function(scope, element, attrs) {
@@ -82,7 +82,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     }
   }
 })
-.controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', '$location', '$window', (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location, $window)=> {
+.controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', '$location', '$window', '$log', (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location, $window, $log)=> {
   _.filter = ''
   _.matchCard = card=> {
     var search = new RegExp(_.filter, 'i')
