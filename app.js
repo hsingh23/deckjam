@@ -84,9 +84,8 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
 })
 .controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', '$location', '$window', '$log', (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location, $window, $log)=> {
   _.filter = ''
-  _.blur = ()=> {
-    document.activeElement.blur()
-  }
+  _.blur = ()=> document.activeElement.blur()
+  _.inputActive = ()=> document.activeElement.tagName === 'INPUT'
   _.matchCard = card=> {
     var search = new RegExp(_.filter, 'i')
     return card.term.match(search) || card.definition.match(search) 

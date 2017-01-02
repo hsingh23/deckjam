@@ -13,9 +13,9 @@ html(lang='en')
     link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
     link(rel='stylesheet', href='style.css')
   body(ng-app='deckjam' ng-controller='homeContainer' layout="column" layout-fill ng-cloak)
-    md-button.md-fab.above-md-fab-bottom-right(ng-click="goTo('tip')")
+    md-button.md-fab.above-md-fab-bottom-right(ng-click="goTo('tip')" ng-hide="inputActive()")
       md-icon.material-icons find_in_page
-    md-button.md-fab.md-fab-bottom-right(ng-click="selected_actions='create'; goTo('create')" ng-show='numSelected() >= 2')
+    md-button.md-fab.md-fab-bottom-right(ng-click="selected_actions='create'; goTo('create')" ng-show='numSelected() >= 2 && !inputActive()')
       md-icon.material-icons save
     md-content(flex)
       span
