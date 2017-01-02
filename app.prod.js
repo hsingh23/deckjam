@@ -71,6 +71,9 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   };
 }).controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', '$location', '$window', '$log', function (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location, $window, $log) {
   _.filter = '';
+  _.blur = function () {
+    document.activeElement.blur();
+  };
   _.matchCard = function (card) {
     var search = new RegExp(_.filter, 'i');
     return card.term.match(search) || card.definition.match(search);
@@ -113,6 +116,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     $mdToast.showSimple('You have ' + _.numSelected() + ' cards selected. Remember to clear them if you are making a new set.');
   }
   function selectTerm(term, setId) {
+    _.blur();
     if (term.selected) {
       _.selected[term.id] = lo.assign({}, term);
       _.selected[term.id].setId = setId;
@@ -308,6 +312,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
         _ref$replaceBloom = _ref.replaceBloom,
         replaceBloom = _ref$replaceBloom === undefined ? true : _ref$replaceBloom;
 
+    _.blur();
     _.losefocus = true;
     _.fetching = true;
     _.decks = replaceTerms ? {} : _.decks || {};
