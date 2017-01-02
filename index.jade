@@ -19,12 +19,14 @@ html(lang='en')
       md-icon.material-icons save
     md-content(flex)
       span
+        .header(layout layout-align="space-between center")
+          span.title( md-truncate ng-click="data.selectedIndex=0") Deckjam
+          span.subtitle Google for flashcards
         .interesting(layout="row")
-          h2.title( md-truncate ng-click="data.selectedIndex=0") Deckjam
           form(ng-submit="performSearch()" layout="row" layout-align="center center" flex)
-            md-progress-linear(md-mode="indeterminate" ng-show="fetching")
             md-input-container.md-block(md-no-float flex)
-              input#search(ng-model="search" type="search" placeholder="Search cards for " lose-focus="losefocus" Flashcards for: Chemistry)
+              md-progress-linear(md-mode="indeterminate" ng-show="fetching")
+              input#search(ng-hide="fetching" ng-model="search" type="search" placeholder="Search cards for: Factor analysis " autocomplete="off" lose-focus="losefocus")
           md-button.md-primary(ng-click="performSearch()" md-truncate)
             md-tooltip Search
             md-icon.material-icons search
@@ -51,7 +53,7 @@ html(lang='en')
             span(layout)
               form(ng-submit="filter=filterInput" layout="row" layout-align="center center" flex)
                 md-input-container.md-block(md-no-float flex)
-                  input(ng-model="filterInput" type="search" placeholder="Filter Decks" lose-focus="losefocus")
+                  input(ng-model="filterInput" type="search" placeholder="Filter Decks" lose-focus="losefocus" autocomplete="off")
               md-button.md-primary(ng-click="filter=filterInput" md-truncate)
                 md-tooltip Filter
                 md-icon.material-icons find_in_page

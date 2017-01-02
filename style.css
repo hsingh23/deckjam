@@ -68,8 +68,17 @@ html{
     margin: 0;
   }
 }
+.header {
+  background-color: antiquewhite;
+  padding: 14px 24px;
+}
 .title {
-  padding-left: 24px;
+  font-family: 'Roboto',arial,sans-serif;
+  font-size: 30px;
+}
+.subtitle {
+  font-size: 18px;
+  text-align: right;
 }
 /*
 md-content.md-default-theme {
