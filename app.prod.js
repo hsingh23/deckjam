@@ -11,8 +11,9 @@ if (location.protocol != 'http:') {
 // no-cors mode won't send authorization header https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
 var lo = _;
 // var app = angular.module('deckjam', ['ngMaterial'])
-var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.google.analytics']).config(function ($mdThemingProvider, $locationProvider) {
+var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.google.analytics']).config(function ($mdThemingProvider, $locationProvider, $sceProvider) {
   $locationProvider.html5Mode(true);
+  $sceProvider.enabled(false);
   var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
     'contrastDefaultColor': 'light',
     'contrastDarkColors': ['50'],
@@ -35,11 +36,26 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   return {
     restrict: 'E',
     scope: {
-      tip: '@',
+      tip: '@?',
+      text: '@',
       icon: '@',
       style: '@?'
     },
-    template: '<md-tooltip style="{{style}}" hide-gt-xs="hide-gt-xs">\n      {{tip}}\n    </md-tooltip>\n    <md-icon hide-gt-xs="hide-gt-xs" class="material-icons" style="{{style}}">\n      {{icon}}\n    </md-icon>\n    <span style="{{style}}" hide-xs>{{tip}}</span>'
+    template: '<md-tooltip style="{{style}}" hide-gt-xs>\n      {{tip || text}}\n    </md-tooltip>\n    <md-icon hide-gt-xs class="material-icons" style="{{style}}">\n      {{icon}}\n    </md-icon>\n    <span style="{{style}}" hide-xs>{{text}}</span>'
+  };
+}).filter("highlight", function () {
+  return function (text, search, caseSensitive) {
+    if (text && (search || angular.isNumber(search))) {
+      text = text.toString();
+      search = search.toString();
+      // if (caseSensitive) {
+      //   return text.split(search).join("<span class=\"ui-match\">" + search + "</span>")
+      // } else {
+      return text.replace(new RegExp(search, "gi"), "<span class=\"ui-match\">$&</span>");
+      // }
+    } else {
+      return text;
+    }
   };
 }).directive('loseFocus', function () {
   return {
@@ -51,7 +67,12 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       });
     }
   };
-}).controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', '$location', function (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location) {
+}).controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', '$location', '$window', function (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location, $window) {
+  _.filter = '';
+  _.matchCard = function (card) {
+    var search = new RegExp(_.filter, 'i');
+    return card.term.match(search) || card.definition.match(search);
+  };
   _.api = 'http://ayudh.org:3337';
   _.goTo = function (id) {
     return $anchorScroll(id);
@@ -260,6 +281,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       _.fetching = false;
       _.selectedIndex = 0;
       localStorage.decks = JSON.stringify(_.decks);
+      $window.decks = _.decks;
       $mdToast.showSimple(_.numDecks() + " Quizlet decks loaded. Click the checkbox to choose a card.");
     }).catch(function () {
       _.fetching = false;
