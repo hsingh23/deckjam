@@ -17,29 +17,17 @@ html(lang='en')
       md-icon.material-icons find_in_page
     md-button.md-fab.md-fab-bottom-right(ng-click="selected_actions='create'; goTo('create')" ng-show='numSelected() >= 2')
       md-icon.material-icons save
-    //- md-toolbar(class="md-hue-1" md-scroll-shrink='false')
-    //-   .md-toolbar-tools
-    span
-      .interesting(layout="row")
-        h2.title( md-truncate ng-click="data.selectedIndex=0") Deckjam
-        form(ng-submit="performSearch()" layout="row" layout-align="center center" flex)
-          md-progress-linear(md-mode="indeterminate" ng-show="fetching")
-          md-input-container.md-block(md-no-float flex)
-            input#search(ng-model="search" type="search" placeholder="Filter cards" lose-focus="losefocus")
-        md-button.md-primary(ng-click="performSearch()" md-truncate)
-          md-tooltip Search
-          md-icon.material-icons search
-          //- md-button(ng-click="performSearch()" md-truncate analytics-on="click" analytics-event="Search") add
-          //- md-button.md-icon-button(ng-click="help=!help" ng-init="help=true")
-          //-   md-icon.material-icons help
-      //- #tabs(layout)
-        md-button.md-primary.md-raised(ng-click="goTo('help')" analytics-on="click" analytics-event="DecksTab" flex) Search Results
-        md-button.md-raised(ng-click="goTo('selected')" analytics-on="click" analytics-event="SelectedTab" flex) Your Selections ({{numSelected()}})
-      //- md-tabs.md-primary(md-stretch-tabs="auto" md-selected='data.selectedIndex')
-      //-   md-tab#decks(aria-controls='decks-content' analytics-on="click" analytics-event="DecksTab") Decks
-      //-   md-tab#selected(aria-controls='selected-content' analytics-on="click" analytics-event="SelectedTab") 
-      //-     strong {{numSelected()}} Selected
     md-content(flex)
+      span
+        .interesting(layout="row")
+          h2.title( md-truncate ng-click="data.selectedIndex=0") Deckjam
+          form(ng-submit="performSearch()" layout="row" layout-align="center center" flex)
+            md-progress-linear(md-mode="indeterminate" ng-show="fetching")
+            md-input-container.md-block(md-no-float flex)
+              input#search(ng-model="search" type="search" placeholder="Search cards for " lose-focus="losefocus" Flashcards for: Chemistry)
+          md-button.md-primary(ng-click="performSearch()" md-truncate)
+            md-tooltip Search
+            md-icon.material-icons search
       #help
         div(layout="column" layout-align="center center" layout-gt-sm="row" layout-align-gt-sm="center" ng-show="numDecks()==0")
           md-card(ng-show="help" ng-init="help=true" flex)
@@ -55,9 +43,6 @@ html(lang='en')
               p With deckjam, you can find flashcards that match your expression style. Each search provides relevant results allowing you to quickly build concise learning materials to prepare for tests and also engage in lifelong learning. Since cards are stored on quizlet, you can easily access them anywhere with rich mobile friendly apps and interactive games.
               strong Why is it called deckjam?
               p This app lets you pack together your favorite flashcards. It allows for improvised creation and curation of study material. Since the end product is a flashcard deck, deckjam just made sense.
-        //- md-card(flex)
-        //-   md-card-content
-        //-     strong {{numSelected()}} cards selected
         md-card#tip(ng-show="numDecks()>0")
           md-card-content()
             h3 Found {{numDecks()}} Quizlet decks containing {{searched}}
