@@ -45,19 +45,19 @@ html(lang='en')
               p With deckjam, you can find flashcards that match your expression style. Each search provides relevant results allowing you to quickly build concise learning materials to prepare for tests and also engage in lifelong learning. Since cards are stored on quizlet, you can easily access them anywhere with rich mobile friendly apps and interactive games.
               strong Why is it called deckjam?
               p This app lets you pack together your favorite flashcards. It allows for improvised creation and curation of study material. Since the end product is a flashcard deck, deckjam just made sense.
-        md-card#tip(ng-show="numDecks()>0")
+        md-card#tip(ng-show="numDecks()>0" ng-click="$log.log('hi'); losefocus=true; losefocus2=true")
           md-card-content()
             h3 Found {{numDecks()}} Quizlet decks containing {{searched}}
             h4(ng-show="numDecks() > 0 && numSelected() < 2") Click cards to add them to your cards
             h4(ng-show="numDecks() > 0 && numSelected() >= 2") Click the Save icon to create your quizlet deck
             span(layout)
-              form(ng-submit="filter=filterInput" layout="row" layout-align="center center" flex)
+              form(ng-submit="filter=filterInput; losefocus2=true" layout="row" layout-align="center center" flex)
                 md-input-container.md-block(md-no-float flex)
-                  input(ng-model="filterInput" type="search" placeholder="Filter Decks" lose-focus="losefocus" autocomplete="off")
-              md-button.md-primary(ng-click="filter=filterInput" md-truncate)
+                  input(ng-model="filterInput" type="search" placeholder="Filter Decks" lose-focus="losefocus2" autocomplete="off")
+              md-button.md-primary(ng-click="filter=filterInput; losefocus2=true" md-truncate)
                 md-tooltip Filter
                 md-icon.material-icons find_in_page
-      #decks
+      #decks()
         md-card(ng-repeat='(id, set) in decks track by id' md-whiteframe="3")
           md-card-title
             md-card-title-text
