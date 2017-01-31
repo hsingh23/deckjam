@@ -1,5 +1,5 @@
 'use strict';
-"use babel";
+'use babel';
 
 if (location.protocol != 'http:') {
   location.protocol = 'http:';
@@ -7,11 +7,11 @@ if (location.protocol != 'http:') {
 // if ('serviceWorker' in navigator) {
 //   navigator.serviceWorker.register('service-worker.js')
 // }
-// removed service workers and fetch because quizlet does not do cors http://stackoverflow.com/a/34940074 
+// removed service workers and fetch because quizlet does not do cors http://stackoverflow.com/a/34940074
 // no-cors mode won't send authorization header https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
 var lo = _;
 // var app = angular.module('deckjam', ['ngMaterial'])
-var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.google.analytics']).config(function ($mdThemingProvider, $locationProvider, $sceProvider) {
+var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.google.analytics', 'ngSanitize']).config(function ($mdThemingProvider, $locationProvider, $sceProvider) {
   $locationProvider.html5Mode(true);
   $sceProvider.enabled(false);
   var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
@@ -29,7 +29,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   return function (scope) {
     if (scope.$first) window.a = new Date(); // window.a can be updated anywhere if to reset counter at some action if ng-repeat is not getting started from $first
     if (scope.$last) $timeout(function () {
-      console.log("## DOM rendering list took: " + (new Date() - window.a) + " ms");
+      console.log('## DOM rendering list took: ' + (new Date() - window.a) + ' ms');
     });
   };
 }]).directive('iconText', function ($mdMedia) {
@@ -69,8 +69,11 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       });
     }
   };
-}).controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', '$location', '$window', '$log', function (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location, $window, $log) {
+}).controller('homeContainer', ['$scope', '$http', '$mdToast', '$mdMedia', '$analytics', '$anchorScroll', '$location', '$window', '$log', '$mdDialog', function (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location, $window, $log, $mdDialog) {
   _.filter = '';
+  _.size = function (x) {
+    return lo.size(x);
+  };
   _.blur = function () {
     return document.activeElement.blur();
   };
@@ -98,10 +101,10 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   };
   _.decks = JSON.parse(localStorage.decks || '{}');
   _.selected = JSON.parse(localStorage.selected || '{}');
-  _.selectedOrder = "time";
+  _.selectedOrder = 'time';
   _.reverse = true;
   _.md = false;
-  _.searched = "your last search term";
+  _.searched = 'your last search term';
   _.numSelected = function () {
     return lo.size(_.selected);
   };
@@ -144,6 +147,15 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       term.selected = mouseDown ? !term.selected : term.selected;
       selectTerm(term, setId);
     }
+  };
+  _.showAnki = function (e) {
+    return (
+      // $mdDialog.show({
+      //   contentElement: '#myStaticDialog',
+      //   scope: {url: _.url}
+      // })
+      $mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title('Import quizlet deck to anki').htmlContent('<p><strong>Anki</strong> is a special flashcard software that lets you decide how well you learned a flashcard. Cards you mark <em>hard</em> show up sooner. Anki is really good at showing you cards just when you are about to forget them allowing you to study less.</p>\n              <p><a href="http://ankisrs.net/docs/manual.html#introduction">Learn more</a></p>\n              <p>First time process</p>\n              <ol>\n                <li><a href="http://ankisrs.net/#download">Install Anki</a></li>\n                <li><a href="https://ankiweb.net/shared/info/714480480">Install Quizlet importer plugin</a></li>\n              </ol>\n              <p>Now use the plugin to import your quizlet deck ' + _.url + '<br/><img src="http://g.recordit.co/QxVfWk322A.gif" alt="Demo"/></p>\n              <ol>\n                <li>Open quizlet importer (anki menu > tools > import your quizlet deck)</li>\n                <li>Paste into the Quizlet Deck url field and hit Import set.</li>\n                <li>Study!</li>\n              </ol>').ariaLabel('Import quizlet deck to anki').ok('Got it!').targetEvent(e))
+    );
   };
   _.removeDeck = function (id) {
     return delete _.decks[id];
@@ -231,7 +243,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       if (res.data.error) {
         $mdToast.showSimple(res.data.error);
       } else {
-        $mdToast.showSimple("Your deck is created");
+        $mdToast.showSimple('Your deck is created');
         _.createdOne += 1;
         localStorage.createdOne = _.createdOne;
         _.selected_actions = 'home';
@@ -239,8 +251,8 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     }).catch(function () {
       _.creating = false;
       _.selected_actions = 'home';
-      $mdToast.showSimple("Unable to create deck");
-      $analytics.eventTrack("Create Failed", { category: 'Create', label: lo.map(_.selected, function (v, k) {
+      $mdToast.showSimple('Unable to create deck');
+      $analytics.eventTrack('Create Failed', { category: 'Create', label: lo.map(_.selected, function (v, k) {
           return lo.pick(v, ['image']);
         }) });
     });
@@ -291,10 +303,10 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       _.selectedIndex = 0;
       localStorage.decks = JSON.stringify(_.decks);
       $window.decks = _.decks;
-      $mdToast.showSimple(_.numDecks() + " Quizlet decks loaded. Click the checkbox to choose a card.");
+      $mdToast.showSimple(_.numDecks() + ' Quizlet decks loaded. Click the checkbox to choose a card.');
     }).catch(function () {
       _.fetching = false;
-      $mdToast.showSimple("Unable to get terms - try another query");
+      $mdToast.showSimple('Unable to get terms - try another query');
     });
   }
   _.performSearch = function () {
@@ -321,7 +333,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     _.decks = replaceTerms ? {} : _.decks || {};
     _.bloom = replaceBloom ? new BloomFilter(3e5, 3e-5) : _.bloom || new BloomFilter(3e5, 3e-5);
     var term = _.search.trim();
-    $analytics.eventTrack(restartIndex ? "Load more" : "Search", { category: 'Fetch', label: term });
+    $analytics.eventTrack(restartIndex ? 'Load more' : 'Search', { category: 'Fetch', label: term });
     if (term.length > 2) {
       $location.search('q', term);
       $mdToast.showSimple('Searching quizlet for ' + term + ' cards: ~8 seconds');
@@ -332,7 +344,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
         _.startIndexes[term] += 10;
       }).catch(function () {
         _.fetching = false;
-        $mdToast.showSimple("Unable to get terms - try another query");
+        $mdToast.showSimple('Unable to get terms - try another query');
       });
     }
   };

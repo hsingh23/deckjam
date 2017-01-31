@@ -1,16 +1,16 @@
-"use babel"
+'use babel'
 if (location.protocol != 'http:') {
   location.protocol = 'http:'
 }
 // if ('serviceWorker' in navigator) {
 //   navigator.serviceWorker.register('service-worker.js')
 // }
-// removed service workers and fetch because quizlet does not do cors http://stackoverflow.com/a/34940074 
+// removed service workers and fetch because quizlet does not do cors http://stackoverflow.com/a/34940074
 // no-cors mode won't send authorization header https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
 var lo = _
 // var app = angular.module('deckjam', ['ngMaterial'])
-var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.google.analytics'])
-.config(function($mdThemingProvider, $locationProvider, $sceProvider) {
+var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.google.analytics', 'ngSanitize'])
+.config(function ($mdThemingProvider, $locationProvider, $sceProvider) {
   $locationProvider.html5Mode(true)
   $sceProvider.enabled(false)
   var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
@@ -34,11 +34,11 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       window.a = new Date() // window.a can be updated anywhere if to reset counter at some action if ng-repeat is not getting started from $first
     if (scope.$last)
       $timeout(function () {
-        console.log("## DOM rendering list took: " + (new Date() - window.a) + " ms")
+        console.log('## DOM rendering list took: ' + (new Date() - window.a) + ' ms')
       })
   }
 }])
-.directive('iconText', function($mdMedia) {
+.directive('iconText', function ($mdMedia) {
   return {
     restrict: 'E',
     scope: {
@@ -71,54 +71,57 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
 //     }
 //   }
 // })
-.directive('loseFocus', function() {
+.directive('loseFocus', function () {
   return {
-    link: function(scope, element, attrs) {
-      scope.$watch(attrs.loseFocus, function(value) {
-        if(value === true) {
+    link: function (scope, element, attrs) {
+      scope.$watch(attrs.loseFocus, function (value) {
+        if (value === true) {
           element[0].blur()
         }
       })
     }
   }
 })
-.controller('homeContainer', ["$scope", "$http", "$mdToast", "$mdMedia", "$analytics", '$anchorScroll', '$location', '$window', '$log', (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location, $window, $log)=> {
+.controller('homeContainer', ['$scope', '$http', '$mdToast', '$mdMedia', '$analytics', '$anchorScroll', '$location', '$window', '$log', '$mdDialog', (_, $http, $mdToast, $mdMedia, $analytics, $anchorScroll, $location, $window, $log, $mdDialog) => {
   _.filter = ''
-  _.blur = ()=> document.activeElement.blur()
-  _.inputActive = ()=> document.activeElement.tagName === 'INPUT'
-  _.matchCard = card=> {
+  _.size = x => {
+    return lo.size(x)
+  }
+  _.blur = () => document.activeElement.blur()
+  _.inputActive = () => document.activeElement.tagName === 'INPUT'
+  _.matchCard = card => {
     var search = new RegExp(_.filter, 'i')
-    return card.term.match(search) || card.definition.match(search) 
+    return card.term.match(search) || card.definition.match(search)
   }
   _.api = 'http://ayudh.org:3337'
-  _.goTo = id=> $anchorScroll(id)
+  _.goTo = id => $anchorScroll(id)
   _.losefocus = false
   _.draggable = false
   // _.api = 'http://localhost:3337'
   _.createdOne = localStorage.createdOne && parseInt(localStorage.createdOne) || 0
   _.fetching = false
-  _.getSetsforTerm = (term)=> $http.get(`${_.api}/quizlet/search?query=${term}`, { cache: true})
-  _.getSets = (sets)=> $http.get(`${_.api}/quizlet/sets?query=${sets}`, { cache: true})
+  _.getSetsforTerm = (term) => $http.get(`${_.api}/quizlet/search?query=${term}`, { cache: true})
+  _.getSets = (sets) => $http.get(`${_.api}/quizlet/sets?query=${sets}`, { cache: true})
   _.decks = JSON.parse(localStorage.decks || '{}')
   _.selected = JSON.parse(localStorage.selected || '{}')
-  _.selectedOrder = "time"
+  _.selectedOrder = 'time'
   _.reverse = true
   _.md = false
-  _.searched = "your last search term"
-  _.numSelected = ()=> lo.size(_.selected)
-  _.numDecks = ()=> lo.size(_.decks)
-  _.selectedArray = ()=> lo.values(_.selected)
+  _.searched = 'your last search term'
+  _.numSelected = () => lo.size(_.selected)
+  _.numDecks = () => lo.size(_.decks)
+  _.selectedArray = () => lo.values(_.selected)
   _.startIndexes = {}
-  if(_.numSelected() == 0 && _.numDecks() == 0 ){
-    $mdToast.showSimple(`Search: Try searching for flashcards above.`)
+  if (_.numSelected() == 0 && _.numDecks() == 0) {
+    $mdToast.showSimple('Search: Try searching for flashcards above.')
   }
-  if(_.numSelected() > 0){
+  if (_.numSelected() > 0) {
     $mdToast.showSimple(`You have ${_.numSelected()} cards selected. Remember to clear them if you are making a new set.`)
   }
-  function selectTerm(term, setId) {
+  function selectTerm (term, setId) {
     _.blur()
     if (term.selected) {
-      _.selected[term.id] = lo.assign({},term)
+      _.selected[term.id] = lo.assign({}, term)
       _.selected[term.id].setId = setId
       _.selected[term.id].time = (new Date()).getTime()
     } else {
@@ -129,25 +132,51 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   _.selectClickTerm = (term, setId) => {
     // checkbox check for tablet and below
     // if(!$mdMedia('gt-md')) {
-      term.selected = !term.selected
-      selectTerm(term, setId)
+    term.selected = !term.selected
+    selectTerm(term, setId)
     // }
   }
-  _.selectDragTerm = (term, setId, mouseDown=true) => {
+  _.selectDragTerm = (term, setId, mouseDown = true) => {
     // drag anywhere for above that
-    if($mdMedia('gt-md')){
+    if ($mdMedia('gt-md')) {
       term.selected = (mouseDown) ? !term.selected : term.selected
       selectTerm(term, setId)
     }
   }
-  _.removeDeck = id=> delete _.decks[id]
-  _.selectAll = id=> {
+  _.showAnki = (e) =>
+    // $mdDialog.show({
+    //   contentElement: '#myStaticDialog',
+    //   scope: {url: _.url}
+    // })
+    $mdDialog.show(
+      $mdDialog.alert()
+        .clickOutsideToClose(true)
+        .title('Import quizlet deck to anki')
+        .htmlContent(`<p><strong>Anki</strong> is a special flashcard software that lets you decide how well you learned a flashcard. Cards you mark <em>hard</em> show up sooner. Anki is really good at showing you cards just when you are about to forget them allowing you to study less.</p>
+              <p><a href="http://ankisrs.net/docs/manual.html#introduction">Learn more</a></p>
+              <p>First time process</p>
+              <ol>
+                <li><a href="http://ankisrs.net/#download">Install Anki</a></li>
+                <li><a href="https://ankiweb.net/shared/info/714480480">Install Quizlet importer plugin</a></li>
+              </ol>
+              <p>Now use the plugin to import your quizlet deck ${_.url}<br/><img src="http://g.recordit.co/QxVfWk322A.gif" alt="Demo"/></p>
+              <ol>
+                <li>Open quizlet importer (anki menu > tools > import your quizlet deck)</li>
+                <li>Paste into the Quizlet Deck url field and hit Import set.</li>
+                <li>Study!</li>
+              </ol>`)
+        .ariaLabel('Import quizlet deck to anki')
+        .ok('Got it!')
+        .targetEvent(e)
+    )
+  _.removeDeck = id => delete _.decks[id]
+  _.selectAll = id => {
     if (_.decks[id]) {
       // some unselected, then select all
-      if (_.decks[id].terms.find(x=> !x.selected)){
+      if (_.decks[id].terms.find(x => !x.selected)) {
         _.decks[id].terms.forEach(term => {
           term.selected = true
-          _.selected[term.id] = lo.assign({},term)
+          _.selected[term.id] = lo.assign({}, term)
           _.selected[term.id].setId = id
           _.selected[term.id].time = (new Date()).getTime()
         })
@@ -161,39 +190,39 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
       localStorage.selected = JSON.stringify(_.selected)
     }
   }
-  _.clearSelected = ()=> {
+  _.clearSelected = () => {
     _.selected = {}
     localStorage.selected = '{}'
   }
-  _.swapSelected = id=> {
+  _.swapSelected = id => {
     var {term, definition} = _.selected[id]
     _.selected[id].definition = term
     _.selected[id].term = definition
     localStorage.selected = JSON.stringify(_.selected)
   }
-  _.swapDeck = id=> {
+  _.swapDeck = id => {
     var {lang_terms, lang_definitions} = _.decks[id]
     _.decks[id].lang_terms = lang_definitions
     _.decks[id].lang_definitions = lang_terms
-    _.decks[id].terms.forEach(o=>{
+    _.decks[id].terms.forEach(o => {
       var {term, definition} = o
       o.definition = term
       o.term = definition
     })
   }
 
-  _.removeSelected = id=> {
+  _.removeSelected = id => {
     var {setId, rank} = _.selected[id]
-    if(_.decks[setId]) {
+    if (_.decks[setId]) {
       _.decks[setId].terms[rank].selected = false
     }
     delete _.selected[id]
     localStorage.selected = JSON.stringify(_.selected)
   }
-  _.create = (title)=> {
+  _.create = (title) => {
     _.url = null
     _.creating = true
-    var data = lo.map(_.selected, (v,k)=> lo.pick(v, ['term', 'definition', 'image']))
+    var data = lo.map(_.selected, (v, k) => lo.pick(v, ['term', 'definition', 'image']))
     $http({
       method: 'POST',
       url: `${_.api}/create-set`,
@@ -203,49 +232,49 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
         lang_definitions: 'en',
         data
       })
-    }).then(res=>{
+    }).then(res => {
       _.url = `https://quizlet.com${res.data.url}`
       _.creating = false
       if (res.data.error) {
         $mdToast.showSimple(res.data.error)
       } else {
-        $mdToast.showSimple("Your deck is created")
+        $mdToast.showSimple('Your deck is created')
         _.createdOne += 1
         localStorage.createdOne = _.createdOne
         _.selected_actions = 'home'
       }
-    }).catch(()=>{
-      _.creating=false
+    }).catch(() => {
+      _.creating = false
       _.selected_actions = 'home'
-      $mdToast.showSimple("Unable to create deck")
-      $analytics.eventTrack("Create Failed", {category: 'Create', label: lo.map(_.selected, (v,k)=> lo.pick(v, ['image']))})
+      $mdToast.showSimple('Unable to create deck')
+      $analytics.eventTrack('Create Failed', {category: 'Create', label: lo.map(_.selected, (v, k) => lo.pick(v, ['image']))})
     })
   }
   _.import = (importUrl) => {
     _.fetching = true
     var x = importUrl && importUrl.match(/\d+/)
-    x && x[0] && _.getSets(x[0]).then(res=>{
+    x && x[0] && _.getSets(x[0]).then(res => {
       _.fetching = false
       _.selected_actions = 'home'
-      res.data.forEach(set=> {
+      res.data.forEach(set => {
         set.terms.forEach(term => {
           term.selected = true
-          _.selected[term.id] = lo.assign({},term)
+          _.selected[term.id] = lo.assign({}, term)
           _.selected[term.id].setId = set.id
           _.selected[term.id].time = (new Date()).getTime()
         })
       })
-    }).catch(()=>{
+    }).catch(() => {
       _.fetching = false
       _.selected_actions = 'home'
     })
     localStorage.selected = JSON.stringify(_.selected)
   }
-  function getSets(setIds) {
-    _.getSets(setIds.map(a=>a.id).join(','))
+  function getSets (setIds) {
+    _.getSets(setIds.map(a => a.id).join(','))
     .then(res => {
-      res.data.forEach(set=> {
-        var terms = lo.filter(set.terms, card=> {
+      res.data.forEach(set => {
+        var terms = lo.filter(set.terms, card => {
           if (_.bloom.test(card.term + card.definition)) {
             return false
           } else {
@@ -253,49 +282,49 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
             return true
           }
         })
-        terms.forEach((t,i) => t.rank = i)
-        if (terms.length > 2){
+        terms.forEach((t, i) => t.rank = i)
+        if (terms.length > 2) {
           _.decks[set.id] = lo.pick(set, ['url', 'title', 'creator', 'display_timestamp', 'lang_terms', 'lang_definitions'])
           _.decks[set.id].terms = terms
           _.decks[set.id].terms_length = terms.length
         }
       })
       _.fetching = false
-      _.selectedIndex=0
+      _.selectedIndex = 0
       localStorage.decks = JSON.stringify(_.decks)
       $window.decks = _.decks
-      $mdToast.showSimple(_.numDecks() + " Quizlet decks loaded. Click the checkbox to choose a card.")
-    }).catch(()=>{
+      $mdToast.showSimple(_.numDecks() + ' Quizlet decks loaded. Click the checkbox to choose a card.')
+    }).catch(() => {
       _.fetching = false
-      $mdToast.showSimple("Unable to get terms - try another query")
+      $mdToast.showSimple('Unable to get terms - try another query')
     })
   }
-  _.performSearch = ()=> _.getTerms({restartIndex:true, replaceTerms: true, replaceBloom: true})
-  _.loadNext = ()=> _.getTerms({restartIndex:false, replaceTerms: true, replaceBloom: false})
-  _.loadPrevious = ()=> {
-    _.startIndexes[_.search]  = _.startIndexes[_.search] - 20
+  _.performSearch = () => _.getTerms({restartIndex:true, replaceTerms: true, replaceBloom: true})
+  _.loadNext = () => _.getTerms({restartIndex:false, replaceTerms: true, replaceBloom: false})
+  _.loadPrevious = () => {
+    _.startIndexes[_.search] = _.startIndexes[_.search] - 20
     _.getTerms({restartIndex:false, replaceTerms: true, replaceBloom: true})
   }
-  _.getTerms = ({restartIndex=true, replaceTerms=true, replaceBloom=true})=> {
+  _.getTerms = ({restartIndex = true, replaceTerms = true, replaceBloom = true}) => {
     _.blur()
     _.losefocus = true
     _.fetching = true
     _.decks = replaceTerms ? {} : (_.decks || {})
     _.bloom = replaceBloom ? new BloomFilter(3e5, 3e-5) : (_.bloom || new BloomFilter(3e5, 3e-5))
     var term = _.search.trim()
-    $analytics.eventTrack((restartIndex ? "Load more": "Search"), {category: 'Fetch', label: term})
-    if(term.length > 2){
+    $analytics.eventTrack((restartIndex ? 'Load more' : 'Search'), {category: 'Fetch', label: term})
+    if (term.length > 2) {
       $location.search('q', term)
       $mdToast.showSimple(`Searching quizlet for ${term} cards: ~8 seconds`)
       _.searched = term
-      _.getSetsforTerm(term).then(res=> {
-        var startIndex =_.startIndexes[term] = restartIndex ? 0 : (_.startIndexes[term] || 0)
-        getSets(res.data.sets.slice(startIndex,startIndex+10))
+      _.getSetsforTerm(term).then(res => {
+        var startIndex = _.startIndexes[term] = restartIndex ? 0 : (_.startIndexes[term] || 0)
+        getSets(res.data.sets.slice(startIndex, startIndex + 10))
         _.startIndexes[term] += 10
       })
-      .catch(()=>{
+      .catch(() => {
         _.fetching = false
-        $mdToast.showSimple("Unable to get terms - try another query")
+        $mdToast.showSimple('Unable to get terms - try another query')
       })
     }
   }

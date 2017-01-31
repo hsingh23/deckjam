@@ -20,6 +20,11 @@
 .relative {
   position: absolute
 }
+#search {
+  font-size: 20px;
+  font-family: "Segoe UI", Arial, Helvetica, "sans-serif";
+  
+}
 #tabs {
   /* background-color: rgba(113, 112, 131, 0.57); */
 }

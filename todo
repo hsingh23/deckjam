@@ -6,7 +6,7 @@ Easy
  ✔ scroll to top and bottom @started @done (1/1/2017, 8:56:34 PM)
  ✔ keep track of deck language @done (16-12-22 16:59)
  ☐ move towards a google feel
- ☐ play with filter as a subhead and search as fixed?
+ ✔ play with filter as a subhead and search as fixed? @done (1/2/2017, 2:46:38 PM) [not a good idea]
  ☐ export to anki UI
  ☐ export tsv download
 
@@ -20,7 +20,7 @@ Hard
 
 anki doc
 
- Anki is a special flashcard software that lets you decide how well you learned a flashcard. If you learned it well, it will show you the card far in the future. If you struggled to recollect it will show you the card sooner. Anki is really good at showing you cards when you are about to forget them allowing you to study less. 
+Anki is a special flashcard software that lets you decide how well you learned a flashcard. If you learned it well, it will show you the card far in the future. If you struggled to recollect it will show you the card sooner. Anki is really good at showing you cards when you are about to forget them allowing you to study less. 
 Learn more here http://ankisrs.net/docs/manual.html#introduction
 
 First time process
