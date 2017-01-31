@@ -19,7 +19,7 @@ html(lang='en')
       md-icon.material-icons save
     md-content(flex)
       span
-        .header(layout layout-align="space-between center")
+        .header(layout layout-align="space-between center" )
           span.title( md-truncate ng-click="data.selectedIndex=0") Deckjam
           span.subtitle Google for flashcards
         .interesting(layout="row")
@@ -58,7 +58,7 @@ html(lang='en')
                 md-tooltip Filter
                 md-icon.material-icons find_in_page
       #decks()
-        md-card(ng-repeat='(id, set) in decks track by id' md-whiteframe="3")
+        md-card(ng-repeat='(id, set) in decks track by id' md-whiteframe="3" ng-show='size(set.terms | filter:matchCard) != 0')
           md-card-title
             md-card-title-text
               .md-headline
@@ -107,7 +107,7 @@ html(lang='en')
               a(href="https://www.paypal.me/hisingh1") Please donate. 
               p And keep learning ;)
         md-card#create(md-whiteframe="3")
-          md-card-actions(layout='row' layout-align="center center" ng-show="selected_actions=='home'" ng-init="selected_actions='home'")
+          md-card-actions(layout='row' layout-align="center center" ng-init="selected_actions='home'")
             md-card-icon-actions
               md-switch(ng-model="selected_edit" ng-init="selected_edit = false" analytics-on="click" analytics-event="Editable") Editable
               md-button(ng-click="selected_actions='import'" analytics-on="click" analytics-event="Import")
@@ -126,24 +126,25 @@ html(lang='en')
           md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='create'")
             md-progress-linear(md-mode="indeterminate" ng-show="creating")
             md-button.md-raised(class='md-icon-button' ng-click="selected_actions='home'")
-              md-tooltip Back
-              md-icon.material-icons chevron_left
+              md-tooltip Close
+              md-icon.material-icons close
             form(ng-submit="create(title); blur()" layout="row" layout-align="center center" flex)
               md-input-container.md-block(flex)
                 label Deck name
                 md-progress-linear(md-mode="indeterminate" ng-show="creating")
                 input(ng-model="title" type="text" autofocus required pattern=".{2,}" placeholder='My Deck' ng-hide="creating")
-            md-button.md-primary(ng-click='create(title)' ng-class="{disabled: !!creating}" analytics-on="click" analytics-event="Creating") {{creating? "Creating..." : "Create"}}
+            md-button.md-primary(ng-click='create(title)' ng-class="{disabled: !!creating}" analytics-on="click" analytics-event="Creating") {{creating? "Creating..." : "Save"}}
           md-card-actions.bump-lower(layout='row' layout-align="center center" ng-show="selected_actions=='import'")
             md-button.md-raised(class='md-icon-button' ng-click="selected_actions='home'")
-              md-tooltip Back
-              md-icon.material-icons chevron_left
+              md-tooltip Close
+              md-icon.material-icons close
             md-input-container.md-block(flex)
               label Quizlet url or id
               input(ng-model="importUrl" autofocus required placeholder='https://quizlet.com/75846167/learning-flash-cards/')
             md-button.md-primary(ng-click='import(importUrl)') Import
           md-card-content(style="margin-top:-10px")
             md-button.md-primary.md-raised(ng-show="url" ng-href="{{url}}" target="_blank" rel="noopener" analytics-on="click" analytics-event="CreatedDeck") Check out your deck!
+            md-button.md-primary.md-raised(ng-show="url" analytics-on="click" analytics-event="anki" ng-click='showAnki()') Import to ANKI
             table.table
               thead
                 tr
@@ -170,6 +171,30 @@ html(lang='en')
                       textarea(aria-label="definition" ng-model="card.definition" ng-minlength="1" style="width:100%")
                     span(ng-if="!selected_edit") {{card.definition}}
 
+    //- div(style='visibility: hidden')
+    //-   #myStaticDialog.md-dialog-container
+    //-     md-dialog
+    //-       p
+    //-         strong Anki
+    //-         |  is a special flashcard software that lets you decide how well you learned a flashcard. Cards you mark 
+    //-         em hard
+    //-         |  show up sooner. Anki is really good at showing you cards just when you are about to forget them allowing you to study less.
+    //-       p
+    //-         a(href='http://ankisrs.net/docs/manual.html#introduction') Learn more
+    //-       p First time process
+    //-       ol
+    //-         li
+    //-           a(href='http://ankisrs.net/#download') Install Anki
+    //-         li
+    //-           a(href='https://ankiweb.net/shared/info/714480480') Install Quizlet importer plugin
+    //-       p
+    //-         | Now use the plugin to import your quizlet deck {{ url }}
+    //-         br
+    //-         img(src='http://g.recordit.co/QxVfWk322A.gif', alt='Demo')
+    //-       ol
+    //-         li Open quizlet importer (anki menu > tools > import your quizlet deck)
+    //-         li Paste into the Quizlet Deck url field and hit Import set.
+    //-         li Study!
 
     script(src='bloomfilter.js')
     script(src='lodash.js')
@@ -187,6 +212,7 @@ html(lang='en')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-aria.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-messages.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-animate.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.9/angular-sanitize.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angulartics/1.3.0/angulartics.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angulartics-google-analytics/0.4.0/angulartics-ga.min.js')
 
