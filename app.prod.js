@@ -84,7 +84,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     var search = new RegExp(_.filter, 'i');
     return card.term.match(search) || card.definition.match(search);
   };
-  _.api = 'http://ayudh.org:3337';
+  _.api = 'https://us-central1-quizlet-cf.cloudfunctions.net/';
   _.goTo = function (id) {
     return $anchorScroll(id);
   };
@@ -94,10 +94,10 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
   _.createdOne = localStorage.createdOne && parseInt(localStorage.createdOne) || 0;
   _.fetching = false;
   _.getSetsforTerm = function (term) {
-    return $http.get(_.api + '/quizlet/search?query=' + term, { cache: true });
+    return $http.get(_.api + 'search?query=' + term, { cache: true });
   };
   _.getSets = function (sets) {
-    return $http.get(_.api + '/quizlet/sets?query=' + sets, { cache: true });
+    return $http.get(_.api + 'sets?query=' + sets, { cache: true });
   };
   _.decks = JSON.parse(localStorage.decks || '{}');
   _.selected = JSON.parse(localStorage.selected || '{}');
@@ -230,7 +230,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     });
     $http({
       method: 'POST',
-      url: _.api + '/create-set',
+      url: _.api + '/createSet',
       data: JSON.stringify({
         title: title,
         lang_terms: 'en',

@@ -93,15 +93,15 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     var search = new RegExp(_.filter, 'i')
     return card.term.match(search) || card.definition.match(search)
   }
-  _.api = 'http://ayudh.org:3337'
+  _.api = 'https://us-central1-quizlet-cf.cloudfunctions.net/'
   _.goTo = id => $anchorScroll(id)
   _.losefocus = false
   _.draggable = false
   // _.api = 'http://localhost:3337'
   _.createdOne = localStorage.createdOne && parseInt(localStorage.createdOne) || 0
   _.fetching = false
-  _.getSetsforTerm = (term) => $http.get(`${_.api}/quizlet/search?query=${term}`, { cache: true})
-  _.getSets = (sets) => $http.get(`${_.api}/quizlet/sets?query=${sets}`, { cache: true})
+  _.getSetsforTerm = (term) => $http.get(`${_.api}search?query=${term}`, { cache: true})
+  _.getSets = (sets) => $http.get(`${_.api}sets?query=${sets}`, { cache: true})
   _.decks = JSON.parse(localStorage.decks || '{}')
   _.selected = JSON.parse(localStorage.selected || '{}')
   _.selectedOrder = 'time'
@@ -225,7 +225,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     var data = lo.map(_.selected, (v, k) => lo.pick(v, ['term', 'definition', 'image']))
     $http({
       method: 'POST',
-      url: `${_.api}/create-set`,
+      url: `${_.api}/createSet`,
       data: JSON.stringify({
         title: title,
         lang_terms: 'en',
