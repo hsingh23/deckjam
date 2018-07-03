@@ -230,7 +230,7 @@ var app = angular.module('deckjam', ['ngMaterial', 'angulartics', 'angulartics.g
     });
     $http({
       method: 'POST',
-      url: _.api + '/createSet',
+      url: _.api + 'createSet',
       data: JSON.stringify({
         title: title,
         lang_terms: 'en',
