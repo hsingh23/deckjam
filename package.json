@@ -5,6 +5,6 @@
   "author": "Harsh Singh <harsingh@cimpress.com>",
   "license": "MIT",
   "devDependencies": {
-    "babel-preset-latest": "^6.16.0"
+    "babel-preset-latest": "^6.24.1"
   }
 }
