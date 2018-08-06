@@ -1,4 +1,7 @@
 # deckjam.org
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/hsingh23/deckjam.svg)](https://greenkeeper.io/)
+
 ## Welcome to Deckjam
 Deckjam is a flash card curation tool.  
 It is for students, teachers, and life long learners. Flashcards are proven to improve recognition and recall, yet creating flashcards is tedious. With deckjam you pick flashcards from many flashcards set to make your own flashcard set. Finally, export to quizlet.com where you can play games and test yourself on your carefully chosen set.
